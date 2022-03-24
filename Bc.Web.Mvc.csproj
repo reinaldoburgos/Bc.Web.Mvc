@@ -1,0 +1,194 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="packages\EntityFramework.6.4.4\build\EntityFramework.props" Condition="Exists('packages\EntityFramework.6.4.4\build\EntityFramework.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{162F2903-DE0D-482C-82AE-5DA0E1A2F690}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Bc.Web.Mvc</RootNamespace>
+    <AssemblyName>Bc.Web.Mvc</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DropDownList_Optgroup, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\DropDownList.Optgroup.MVC.1.0.0\lib\net40\DropDownList_Optgroup.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6\System.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Core">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.Helpers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.Mvc.5.2.7\lib\net45\System.Web.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.Razor.3.2.7\lib\net45\System.Web.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Routing">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Base\BaseController.cs" />
+    <Compile Include="Base\BaseView.cs" />
+    <Compile Include="Current.cs" />
+    <Compile Include="Data\DeceContext.cs" />
+    <Compile Include="Extensions\DescriptionPropertyAttribute.cs" />
+    <Compile Include="Extensions\Enum.cs" />
+    <Compile Include="Extensions\Formats.cs" />
+    <Compile Include="Extensions\Html\Alert.cs" />
+    <Compile Include="Extensions\Html\Button.cs" />
+    <Compile Include="Extensions\Html\CheckBox.cs" />
+    <Compile Include="Extensions\Html\Content.cs" />
+    <Compile Include="Extensions\Html\ContentBox.cs" />
+    <Compile Include="Extensions\Html\DatePicker.cs" />
+    <Compile Include="Extensions\Html\Display.cs" />
+    <Compile Include="Extensions\Html\EmbedResource.cs" />
+    <Compile Include="Extensions\Html\EntityForm.cs" />
+    <Compile Include="Extensions\Html\EntityLog.cs" />
+    <Compile Include="Extensions\Html\EntityView.cs" />
+    <Compile Include="Extensions\Html\Form.cs" />
+    <Compile Include="Extensions\Html\FormActionGroup.cs" />
+    <Compile Include="Extensions\Html\FormGroup.cs" />
+    <Compile Include="Extensions\Html\HelpInputGroup.cs" />
+    <Compile Include="Extensions\Html\HelpPassword.cs" />
+    <Compile Include="Extensions\Html\HelpTextBox.cs" />
+    <Compile Include="Extensions\Html\Icon.cs" />
+    <Compile Include="Extensions\Html\Label.cs" />
+    <Compile Include="Extensions\Html\LabelWidget.cs" />
+    <Compile Include="Extensions\Html\ListBox.cs" />
+    <Compile Include="Extensions\Html\MergeHtml.cs" />
+    <Compile Include="Extensions\Html\Modal.cs" />
+    <Compile Include="Extensions\Html\Nav.cs" />
+    <Compile Include="Extensions\Html\PanelGroup.cs" />
+    <Compile Include="Extensions\Html\Password.cs" />
+    <Compile Include="Extensions\Html\RadioGroup.cs" />
+    <Compile Include="Extensions\Html\Rate.cs" />
+    <Compile Include="Extensions\Html\ReadOnlyCheck.cs" />
+    <Compile Include="Extensions\Html\Select.cs" />
+    <Compile Include="Extensions\Html\SelectGroup.cs" />
+    <Compile Include="Extensions\Html\Stage.cs" />
+    <Compile Include="Extensions\Html\Table.cs" />
+    <Compile Include="Extensions\Html\TextBox.cs" />
+    <Compile Include="Extensions\Html\ValidationMessage.cs" />
+    <Compile Include="Extensions\Html\WebViewPage.cs" />
+    <Compile Include="Extensions\IDAttribute.cs" />
+    <Compile Include="Extensions\MultiSelectList.cs" />
+    <Compile Include="Extensions\Object.cs" />
+    <Compile Include="Extensions\SelectGroup.cs" />
+    <Compile Include="Extensions\SelectList.cs" />
+    <Compile Include="Helper\GeneralValues.cs" />
+    <Compile Include="Helper\Parameter.cs" />
+    <Compile Include="Helper\TreeViewHelper.cs" />
+    <Compile Include="Html\Bc.cs" />
+    <Compile Include="Html\Icons.cs" />
+    <Compile Include="Html\Label.cs" />
+    <Compile Include="Html\MvcContent.cs" />
+    <Compile Include="Html\NavCollection.cs" />
+    <Compile Include="Html\TabCollection.cs" />
+    <Compile Include="Session.cs" />
+    <Compile Include="Utility\DisposableHelper.cs" />
+    <Compile Include="Utility\HtmlHelper.cs" />
+    <Compile Include="Helper\Xml.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility\Message.cs" />
+    <Compile Include="WrappedJsonResult.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+    </PropertyGroup>
+  </Target>
+</Project>
