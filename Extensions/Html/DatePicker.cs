@@ -27,15 +27,33 @@ namespace Bc.Web.Mvc.Html
 
 
         public static MvcHtmlString BcDatePickerFor<TModel>(this HtmlHelper<TModel> htmlHelper,
-      Expression<Func<TModel, DateTime?>> expression, object htmlAttributes = null,
-      bool includeTime = false, DateTime? minDate = null, DateTime? maxDate = null)
+            Expression<Func<TModel, DateTime?>> expression, object htmlAttributes = null,
+            bool includeMessageValidation = false,
+            bool includeTime = false, DateTime? minDate = null, DateTime? maxDate = null,
+            bool readOnly = false)
         {
             Func<TModel, DateTime?> method = expression.Compile();
             DateTime? value = method(htmlHelper.ViewData.Model);
 
-            var editorAttr = GetDateAttr(htmlAttributes, value);
+            var editorAttr = GetDateAttr(htmlAttributes, value, includeTime: includeTime, minDate: minDate, maxDate: maxDate, readOnly: readOnly);
 
-            return htmlHelper.TextBoxFor(expression, editorAttr);
+            //return htmlHelper.TextBoxFor(expression, editorAttr);
+
+
+            string editor = htmlHelper.TextBoxFor(expression, editorAttr).ToString();
+            editor = Helper.Utils.ReplaceNameAttributes(htmlHelper, expression, editor, editorAttr);
+
+
+            string validationMessage = string.Empty;
+
+            if (includeMessageValidation)
+            {
+                validationMessage = htmlHelper.BcValidationMessageFor(expression).ToString();
+                validationMessage = Helper.Utils.ReplaceNameAttributes(htmlHelper, expression, validationMessage, editorAttr);
+            }
+
+            //return MvcHtmlString.Create(editor.ToString());
+            return MvcHtmlString.Create(editor.ToString() + validationMessage.ToString());
         }
 
 
@@ -108,19 +126,19 @@ namespace Bc.Web.Mvc.Html
         //    return editorAttr;
         //}
 
-
-
-
         private static IDictionary<string, object> GetDateAttr(object htmlAttributes,
-         DateTime? value, bool includeTime = false, DateTime? minDate = null, DateTime? maxDate = null)
+            DateTime? value, bool includeTime = false, DateTime? minDate = null, DateTime? maxDate = null, bool readOnly = false)
         {
+
             string inputFormat = Bc.Web.Mvc.Html.Constants.DateFormat.InputDateFormat;
             string serverFormat = Bc.Web.Mvc.Html.Constants.DateFormat.ServerInputDateFormat;
+            string classFormat = Bc.Web.Mvc.Html.Constants.Style.ElementClass.DatePickerClass;
 
             if (includeTime)
             {
                 inputFormat = Bc.Web.Mvc.Html.Constants.DateFormat.InputDateTimeFormat;
                 serverFormat = Bc.Web.Mvc.Html.Constants.DateFormat.ServerInputDateTimeFormat;
+                classFormat = Bc.Web.Mvc.Html.Constants.Style.ElementClass.DateTimePickerClass;
             }
 
             string textValue = string.Format("{0:" + serverFormat + "}", value);
@@ -130,11 +148,12 @@ namespace Bc.Web.Mvc.Html
                         {
                             //rp3_data_date = textValue,
                             bc_data_date = textValue,
+                            //use_time = false,
                             use_time = includeTime.ToString().ToLower(),
-                            //data_date = textValue,
+                            data_date = textValue,
                             value = textValue,
                             date_date_format = inputFormat,
-                            @class = Bc.Web.Mvc.Html.Constants.Style.ElementClass.DatePickerClass
+                            @class = classFormat
                         },
                         htmlAttributes);
 
@@ -147,6 +166,10 @@ namespace Bc.Web.Mvc.Html
             {
                 editorAttr.Add("max-Date", string.Format("{0:" + serverFormat + "}", maxDate));
             }
+
+            if (readOnly)
+                editorAttr.Add("readonly", "");
+            //editorAttr.Add(new KeyValuePair<string, object>("readonly", ""));
 
             return editorAttr;
         }
@@ -230,21 +253,41 @@ namespace Bc.Web.Mvc.Html
         //}
 
         public static MvcHtmlString BcDatePicker(this HtmlHelper htmlHelper, string name, DateTime value,
-           object htmlAttributes = null, bool includeTime = false, DateTime? minDate = null, DateTime? maxDate = null)
+           object htmlAttributes = null, bool includeTime = false, DateTime? minDate = null, DateTime? maxDate = null,
+           bool readOnly = false)
         {
-            var editorAttr = GetDateAttr(htmlAttributes, value, includeTime, minDate, maxDate);
+            var editorAttr = GetDateAttr(htmlAttributes, value, includeTime, minDate, maxDate, readOnly: readOnly);
             string textValue = Convert.ToString(editorAttr["value"]);
 
             return htmlHelper.TextBox(name, textValue, editorAttr);
         }
 
         public static MvcHtmlString BcDatePicker(this HtmlHelper htmlHelper, string name, DateTime? value,
-           object htmlAttributes = null, bool includeTime = false, DateTime? minDate = null, DateTime? maxDate = null)
+           object htmlAttributes = null, bool includeTime = false, DateTime? minDate = null, DateTime? maxDate = null, bool readOnly = false)
         {
-            var editorAttr = GetDateAttr(htmlAttributes, value, includeTime, minDate, maxDate: maxDate);
+            var editorAttr = GetDateAttr(htmlAttributes, value, includeTime, minDate, maxDate: maxDate, readOnly: readOnly);
             string textValue = Convert.ToString(editorAttr["value"]);
 
             return htmlHelper.TextBox(name, textValue, editorAttr);
+        }
+
+
+        public static MvcHtmlString BcDateRangePicker(this HtmlHelper htmlHelper, string name, object htmlAttributes = null)
+        {
+            //var editorAttr = GetDateAttr(htmlAttributes, value, includeTime, minDate, maxDate: maxDate, readOnly: readOnly);
+            //string textValue = Convert.ToString(editorAttr["value"]);
+
+            string classFormat = Bc.Web.Mvc.Html.Constants.Style.ElementClass.DateRangePickerClass;
+
+            var editorAttr = Bc.Web.Mvc.Utility.HtmlHelper.MergeAnonymousObjectHtmlAttributes(
+                      new
+                      {
+                          @class = classFormat
+                      },
+                      htmlAttributes);
+            editorAttr.Add("bcType", "DateRange");
+
+            return htmlHelper.TextBox(name, null, htmlAttributes: editorAttr);
         }
     }
 }

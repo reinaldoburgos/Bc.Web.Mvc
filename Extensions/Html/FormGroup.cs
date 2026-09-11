@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
 using System.Web.Mvc;
+using System.Web.Routing;
 
 namespace Bc.Web.Mvc.Html
 {
@@ -10,7 +11,8 @@ namespace Bc.Web.Mvc.Html
     {
         private static MvcHtmlString FormGroupEditor<TModel, TValue>(this HtmlHelper<TModel> htmlHelper,
             Expression<Func<TModel, TValue>> expression,
-            string editor, object labelHtmlAttributes = null, string labelText = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool labelTextUp = false)
+            string editor, object labelHtmlAttributes = null, string labelText = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4,
+            bool labelTextUp = Constants.DefaultLabelPosition, object formGroupHtmlAttributes = null)
         {
             //int labelColSize = GetLabelColSize(labelSize); ;
             int labelColSize = labelTextUp ? 0 : GetLabelColSize(labelSize);
@@ -23,8 +25,20 @@ namespace Bc.Web.Mvc.Html
             MvcHtmlString label = htmlHelper.BcLabelFor(expression, htmlAttributes: labelAttr, labelText: labelText);
 
             TagBuilder mainBuilder = new TagBuilder("div");
-
             mainBuilder.AddCssClass(Bc.Web.Mvc.Html.Constants.Style.ContentClass.FormGroupClass);
+
+            if (formGroupHtmlAttributes != null)
+            {
+                // Convertir htmlAttributes a un diccionario
+                var attributes = new RouteValueDictionary(formGroupHtmlAttributes);
+
+                // Añadir estos atributos al TagBuilder
+                foreach (KeyValuePair<string, object> attribute in attributes)
+                {
+                    mainBuilder.MergeAttribute(attribute.Key, attribute.Value.ToString(), true);
+                }
+            }
+
 
             TagBuilder innerControl = new TagBuilder("div");
             innerControl.AddCssClass(Constants.Style.ContentClass.InputControlClass);
@@ -43,10 +57,10 @@ namespace Bc.Web.Mvc.Html
             return MvcHtmlString.Create(mainBuilder.ToString());
         }
 
-        public static MvcContent BcBeginFormGroupEditor(this HtmlHelper htmlHelper, string labelText, object labelHtmlAttributes = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4)
+        public static MvcContent BcBeginFormGroupEditor(this HtmlHelper htmlHelper, string labelText, object labelHtmlAttributes = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool labelTextUp = Constants.DefaultLabelPosition)
         {
             return new MvcContent(
-                () => htmlHelper.BeginFormGroupEditor(labelText, labelHtmlAttributes, labelSize),
+                () => htmlHelper.BeginFormGroupEditor(labelText, labelHtmlAttributes, labelSize, labelTextUp),
                 () => htmlHelper.EndFormGroupEditor()
             );
         }
@@ -103,9 +117,10 @@ namespace Bc.Web.Mvc.Html
             return labelColSize;
         }
 
-        private static void BeginFormGroupEditor(this HtmlHelper htmlHelper, string labelText, object labelHtmlAttributes = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4)
+        private static void BeginFormGroupEditor(this HtmlHelper htmlHelper, string labelText, object labelHtmlAttributes = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool labelTextUp = Constants.DefaultLabelPosition)
         {
-            int labelColSize = GetLabelColSize(labelSize);
+            //int labelColSize = GetLabelColSize(labelSize);
+            int labelColSize = labelTextUp ? 0 : GetLabelColSize(labelSize);
             int inputColSize = 12 - labelColSize;
 
             var labelAttr =
@@ -116,7 +131,17 @@ namespace Bc.Web.Mvc.Html
 
             StringBuilder mainBuilder = new StringBuilder(string.Format("<div class=\"{0}\">", Bc.Web.Mvc.Html.Constants.Style.ContentClass.FormGroupClass));
 
-            mainBuilder.Append(label.ToString());
+            StringBuilder subBuilder = new StringBuilder($"<div class=\"{Bc.Web.Mvc.Html.Constants.Style.ContentClass.InputControlClass} {"col-sm-" + inputColSize.ToString()}\"> ");
+
+            if (labelTextUp)
+            {
+                subBuilder.Append(label.ToString());
+                mainBuilder.Append(subBuilder.ToString());
+            }
+            else
+            {
+                mainBuilder.Append(label.ToString());
+            }
 
             mainBuilder.AppendFormat("<div class=\"{0} {1}\">",
                 Constants.Style.ContentClass.InputControlClass,
@@ -133,9 +158,9 @@ namespace Bc.Web.Mvc.Html
         }
 
         internal static MvcHtmlString FormGroupEditor(this HtmlHelper htmlHelper,
-            string editor, object labelHtmlAttributes = null, string labelText = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4)
+            string editor, object labelHtmlAttributes = null, string labelText = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool labelTextUp = false)
         {
-            int labelColSize = GetLabelColSize(labelSize); ;
+            int labelColSize = labelTextUp ? 0 : GetLabelColSize(labelSize); ;
             int inputColSize = 12 - labelColSize;
 
             var labelAttr =
@@ -160,48 +185,57 @@ namespace Bc.Web.Mvc.Html
             TagBuilder innerControl = new TagBuilder("div");
             innerControl.AddCssClass(Constants.Style.ContentClass.InputControlClass);
             innerControl.AddCssClass("col-sm-" + inputColSize.ToString());
-            innerControl.InnerHtml = editor;
 
-            mainBuilder.InnerHtml = left.ToString() + innerControl.ToString();
-
+            if (labelTextUp)
+            {
+                innerControl.InnerHtml = left.ToString() + editor;
+                mainBuilder.InnerHtml = innerControl.ToString();
+            }
+            else
+            {
+                innerControl.InnerHtml = editor;
+                mainBuilder.InnerHtml = left.ToString() + innerControl.ToString();
+            }
             return MvcHtmlString.Create(mainBuilder.ToString());
         }
 
         public static MvcHtmlString BcFormGroupText(this HtmlHelper htmlHelper, string name, string value = "", object labelHtmlAttributes = null, object editorHtmlAttributes = null,
-            string editorValueFormat = null, string labelText = null, bool readOnly = false, HtmlColumnSize labelSize = HtmlColumnSize.Size_4)
+            string editorValueFormat = null, string labelText = null, bool readOnly = false, HtmlColumnSize labelSize = HtmlColumnSize.Size_4,
+            bool labelTextUp = Constants.DefaultLabelPosition)
         {
             MvcHtmlString editor = htmlHelper.BcTextBox(name, value, htmlAttributes: editorHtmlAttributes, format: editorValueFormat, readOnly: readOnly);
 
-            return htmlHelper.FormGroupEditor(editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize);
+            return htmlHelper.FormGroupEditor(editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize, labelTextUp: labelTextUp);
         }
 
 
 
         public static MvcHtmlString BcFormGroupTextBoxFor<TModel, TValue>(this HtmlHelper<TModel> htmlHelper,
             Expression<Func<TModel, TValue>> expression, object labelHtmlAttributes = null, object editorHtmlAttributes = null,
-            string editorValueFormat = null, string labelText = null, bool readOnly = false, HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool labelTextUp = false)
+            string editorValueFormat = null, string labelText = null, bool readOnly = false, HtmlColumnSize labelSize = HtmlColumnSize.Size_4,
+            bool labelTextUp = Constants.DefaultLabelPosition, object formGroupHtmlAttributes = null, bool toUpperCase = false)
         {
-            MvcHtmlString editor = htmlHelper.BcTextBoxFor(expression, htmlAttributes: editorHtmlAttributes, format: editorValueFormat, readOnly: readOnly);
+            MvcHtmlString editor = htmlHelper.BcTextBoxFor(expression, htmlAttributes: editorHtmlAttributes, format: editorValueFormat, readOnly: readOnly, toUpperCase: toUpperCase);
 
-            return htmlHelper.FormGroupEditor(expression, editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize, labelTextUp: labelTextUp);
+            return htmlHelper.FormGroupEditor(expression, editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize, labelTextUp: labelTextUp, formGroupHtmlAttributes: formGroupHtmlAttributes);
         }
 
         public static MvcHtmlString BcFormGroupNumericTextBoxFor<TModel, TValue>(this HtmlHelper<TModel> htmlHelper,
            Expression<Func<TModel, TValue>> expression, object labelHtmlAttributes = null, object editorHtmlAttributes = null,
            byte precision = 0, NumericType numericType = NumericType.Number, bool nullable = true, string currencySymbol = null,
            TextAlign textAlign = TextAlign.Right, string labelText = null,
-           HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool readOnly = false)
+           HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool readOnly = false, bool labelTextUp = Constants.DefaultLabelPosition)
         {
             MvcHtmlString editor = htmlHelper.BcNumericTextBoxFor(expression, htmlAttributes: editorHtmlAttributes,
                 precision: precision, numericType: numericType, nullable: nullable, currencySymbol: currencySymbol, textAlign: textAlign, readOnly: readOnly);
 
-            return htmlHelper.FormGroupEditor(expression, editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize);
+            return htmlHelper.FormGroupEditor(expression, editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize, labelTextUp: labelTextUp);
         }
 
 
         public static MvcHtmlString BcFormGroupTextAreaFor<TModel, TValue>(this HtmlHelper<TModel> htmlHelper,
             Expression<Func<TModel, TValue>> expression, object labelHtmlAttributes = null, object editorHtmlAttributes = null,
-            string labelText = null, bool readOnly = false, HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool labelTextUp = false)
+            string labelText = null, bool readOnly = false, HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool labelTextUp = Constants.DefaultLabelPosition)
         {
             MvcHtmlString editor = htmlHelper.BcTextAreaFor(expression, htmlAttributes: editorHtmlAttributes, readOnly: readOnly);
 
@@ -209,11 +243,11 @@ namespace Bc.Web.Mvc.Html
         }
 
         public static MvcHtmlString BcFormGroupTextArea(this HtmlHelper htmlHelper, string name, string value = "", object labelHtmlAttributes = null, object editorHtmlAttributes = null,
-            string labelText = null, bool readOnly = false, HtmlColumnSize labelSize = HtmlColumnSize.Size_4)
+            string labelText = null, bool readOnly = false, HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool labelTextUp = Constants.DefaultLabelPosition)
         {
             MvcHtmlString editor = htmlHelper.BcTextArea(name, value, htmlAttributes: editorHtmlAttributes, readOnly: readOnly);
 
-            return htmlHelper.FormGroupEditor(editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize);
+            return htmlHelper.FormGroupEditor(editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize, labelTextUp: labelTextUp);
         }
 
 
@@ -242,8 +276,8 @@ namespace Bc.Web.Mvc.Html
         public static MvcHtmlString BcFormGroupDropDownListFor<TModel, TValue>(this HtmlHelper<TModel> htmlHelper,
             Expression<Func<TModel, TValue>> expression, IEnumerable<SelectListItem> selectList,
             object labelHtmlAttributes = null, object editorHtmlAttributes = null,
-            string labelText = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4, 
-            bool labelTextUp = false, bool useAjax = false)
+            string labelText = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4,
+            bool labelTextUp = Constants.DefaultLabelPosition, bool useAjax = false)
         {
             MvcHtmlString editor = htmlHelper.BcDropDownListFor(expression, selectList, htmlAttributes: editorHtmlAttributes, useAjax: useAjax);
 
@@ -253,14 +287,13 @@ namespace Bc.Web.Mvc.Html
         public static MvcHtmlString BcFormGroupDropDownGroupListFor<TModel, TValue>(this HtmlHelper<TModel> htmlHelper,
             Expression<Func<TModel, TValue>> expression, IEnumerable<GroupedSelectListItem> selectList,
             object labelHtmlAttributes = null, object editorHtmlAttributes = null,
-            string labelText = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool labelTextUp = false)
+            string labelText = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool labelTextUp = Constants.DefaultLabelPosition)
         {
             MvcHtmlString editor = htmlHelper.BcDropDownGroupListFor(expression, selectList, htmlAttributes: editorHtmlAttributes);
 
             return htmlHelper.FormGroupEditor(expression, editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize, labelTextUp: labelTextUp);
         }
 
-        //todo: general values
         //public static MvcHtmlString BcFormGroupDropDownListIdentificationTypeFor<TModel, TValue>(this HtmlHelper<TModel> htmlHelper,
         //    Expression<Func<TModel, TValue>> expression,
         //    object labelHtmlAttributes = null, object editorHtmlAttributes = null,
@@ -271,7 +304,6 @@ namespace Bc.Web.Mvc.Html
         //    return htmlHelper.FormGroupEditor(expression, editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize);
         //}
 
-        //todo: general values
         //public static MvcHtmlString BcFormGroupDropDownGeneralValuesFor<TModel, TValue>(this HtmlHelper<TModel> htmlHelper,
         //    Expression<Func<TModel, TValue>> expression, short id,
         //    object labelHtmlAttributes = null, object editorHtmlAttributes = null,
@@ -307,48 +339,97 @@ namespace Bc.Web.Mvc.Html
         //}
 
         public static MvcHtmlString BcFormGroupDatePickerFor<TModel>(this HtmlHelper<TModel> htmlHelper,
-   Expression<Func<TModel, DateTime?>> expression, object labelHtmlAttributes = null, object editorHtmlAttributes = null,
-    string labelText = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool includeTime = false, bool labelTextUp = false)
+            Expression<Func<TModel, DateTime?>> expression, object labelHtmlAttributes = null, object editorHtmlAttributes = null,
+            bool includeMessageValidation = false,
+            string labelText = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool includeTime = false, bool labelTextUp = Constants.DefaultLabelPosition,
+            bool readOnly = false)
         {
-            MvcHtmlString editor = htmlHelper.BcDatePickerFor(expression, editorHtmlAttributes, includeTime: includeTime);
+            MvcHtmlString editor = htmlHelper.BcDatePickerFor(expression, editorHtmlAttributes, includeMessageValidation: includeMessageValidation, includeTime: includeTime, readOnly: readOnly);
 
             return htmlHelper.FormGroupEditor(expression, editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize, labelTextUp: labelTextUp);
         }
 
         public static MvcHtmlString BcFormGroupDatePicker(this HtmlHelper htmlHelper, string name, DateTime value, string labelText,
             object labelHtmlAttributes = null, object editorHtmlAttributes = null,
-            HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool includeTime = false, bool labelTextUp = false)
+            HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool includeTime = false, bool labelTextUp = Constants.DefaultLabelPosition, bool readOnly = false)
         {
-            MvcHtmlString editor = htmlHelper.BcDatePicker(name, value, includeTime: includeTime);
+            MvcHtmlString editor = htmlHelper.BcDatePicker(name, value, includeTime: includeTime, readOnly: readOnly);
 
             return htmlHelper.FormGroupEditor(editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize);
         }
 
         public static MvcHtmlString BcFormGroupDatePicker(this HtmlHelper htmlHelper, string name, DateTime? value, string labelText,
             object labelHtmlAttributes = null, object editorHtmlAttributes = null,
-            HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool includeTime = false)
+            HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool includeTime = false, bool readOnly = false)
         {
-            MvcHtmlString editor = htmlHelper.BcDatePicker(name, value, includeTime: includeTime);
+            MvcHtmlString editor = htmlHelper.BcDatePicker(name, value, includeTime: includeTime, readOnly: readOnly);
 
             return htmlHelper.FormGroupEditor(editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize);
         }
 
-        public static MvcHtmlString BcFormGroupDropDownList(this HtmlHelper htmlHelper, IEnumerable<SelectListItem> selectList,
-            string labelText, object labelHtmlAttributes = null, object editorHtmlAttributes = null,
-            string name = "", HtmlColumnSize labelSize = HtmlColumnSize.Size_4)
+        public static MvcHtmlString BcFormGroupDateRangePicker(this HtmlHelper htmlHelper, string name, string labelText,
+            object labelHtmlAttributes = null, object editorHtmlAttributes = null,
+            HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool labelTextUp = Constants.DefaultLabelPosition)
         {
-            MvcHtmlString editor = htmlHelper.BcDropDownList(selectList, htmlAttributes: editorHtmlAttributes, name: name);
+            MvcHtmlString editor = htmlHelper.BcDateRangePicker(name, editorHtmlAttributes);
+
+            return htmlHelper.FormGroupEditor(editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize, labelTextUp: labelTextUp);
+        }
+
+
+
+        #region DatePicker DexExtreme
+
+        public static MvcHtmlString BcFormGroupDatePickerDevExFor<TModel>(this HtmlHelper<TModel> htmlHelper,
+           Expression<Func<TModel, DateTime?>> expression, object labelHtmlAttributes = null, object editorHtmlAttributes = null,
+           bool includeMessageValidation = false,
+           string labelText = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool includeTime = false, bool labelTextUp = Constants.DefaultLabelPosition,
+           bool readOnly = false)
+        {
+            MvcHtmlString editor = htmlHelper.BcDatePickerDevExFor(expression, editorHtmlAttributes, includeMessageValidation: includeMessageValidation, includeTime: includeTime, readOnly: readOnly);
+
+            return htmlHelper.FormGroupEditor(expression, editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize, labelTextUp: labelTextUp);
+        }
+
+        public static MvcHtmlString BcFormGroupDatePickerDevEx(this HtmlHelper htmlHelper, string name, DateTime value, string labelText,
+            object labelHtmlAttributes = null, object editorHtmlAttributes = null,
+            HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool includeTime = false, bool labelTextUp = Constants.DefaultLabelPosition, bool readOnly = false)
+        {
+            MvcHtmlString editor = htmlHelper.BcDatePickerDevEx(name, value, includeTime: includeTime, readOnly: readOnly);
 
             return htmlHelper.FormGroupEditor(editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize);
+        }
+
+        public static MvcHtmlString BcFormGroupDatePickerDevEx(this HtmlHelper htmlHelper, string name, DateTime? value, string labelText,
+            object labelHtmlAttributes = null, object editorHtmlAttributes = null,
+            HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool includeTime = false, bool readOnly = false)
+        {
+            MvcHtmlString editor = htmlHelper.BcDatePickerDevEx(name, value, includeTime: includeTime, readOnly: readOnly);
+
+            return htmlHelper.FormGroupEditor(editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize);
+        }
+
+
+        #endregion DatePicker DexExtreme
+
+
+        public static MvcHtmlString BcFormGroupDropDownList(this HtmlHelper htmlHelper, IEnumerable<SelectListItem> selectList,
+            string labelText, object labelHtmlAttributes = null, object editorHtmlAttributes = null,
+            string name = "", HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool labelTextUp = Constants.DefaultLabelPosition,
+            bool useAjax = false)
+        {
+            MvcHtmlString editor = htmlHelper.BcDropDownList(selectList, htmlAttributes: editorHtmlAttributes, name: name, useAjax: useAjax);
+
+            return htmlHelper.FormGroupEditor(editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize, labelTextUp: labelTextUp);
         }
 
         public static MvcHtmlString BcFormGroupDropDownGroupList(this HtmlHelper htmlHelper, IEnumerable<GroupedSelectListItem> selectList,
             string labelText, object labelHtmlAttributes = null, object editorHtmlAttributes = null,
-            string name = "", HtmlColumnSize labelSize = HtmlColumnSize.Size_4)
+            string name = "", HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool labelTextUp = Constants.DefaultLabelPosition)
         {
             MvcHtmlString editor = htmlHelper.BcDropDownGroupList(selectList, htmlAttributes: editorHtmlAttributes, name: name);
 
-            return htmlHelper.FormGroupEditor(editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize);
+            return htmlHelper.FormGroupEditor(editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize, labelTextUp: labelTextUp);
         }
 
 
@@ -377,12 +458,35 @@ namespace Bc.Web.Mvc.Html
         }
 
         public static MvcHtmlString BcFormGroupCheckBoxFor<TModel>(this HtmlHelper<TModel> htmlHelper,
-            Expression<Func<TModel, bool>> expression, object labelHtmlAttributes = null, object editorHtmlAttributes = null, string labelText = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool readOnly = false)
+            Expression<Func<TModel, bool>> expression, object labelHtmlAttributes = null, object editorHtmlAttributes = null, string labelText = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool readOnly = false, bool labelTextUp = false,
+            object formGroupHtmlAttributes = null)
         {
             MvcHtmlString editor = htmlHelper.BcCheckBoxFor(expression, htmlAttributes: editorHtmlAttributes, readOnly: readOnly);
 
-            return htmlHelper.FormGroupEditor(expression, editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize);
+            return htmlHelper.FormGroupEditor(expression, editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize, labelTextUp: labelTextUp, formGroupHtmlAttributes: formGroupHtmlAttributes);
         }
+
+
+        //TODO: Solo comentario, Control Toogle
+        public static MvcHtmlString BcFormGroupCheckBoxToggleFor<TModel>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, bool>> expression,
+            Icons dataOnIcon = Icons.Check, Icons dataOffIcon = Icons.Cancel,
+            string dataOn = "Si", ElementThemeType dataOnthemeType = ElementThemeType.Primary,
+            string dataOff = "No", ElementThemeType dataOffthemeType = ElementThemeType.Default,
+            int? width = null,
+            string labelText = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4, object labelHtmlAttributes = null, bool labelTextUp = false,
+            object editorHtmlAttributes = null, bool readOnly = false)
+        {
+            MvcHtmlString editor = htmlHelper.BcCheckBoxToggleFor(expression, dataOnIcon: dataOnIcon, dataOffIcon: dataOffIcon,
+                dataOn: dataOn, dataOnthemeType: dataOnthemeType,
+                dataOff: dataOff, dataOffthemeType: dataOffthemeType,
+                width: width,
+                labelText: labelText, labelSize: labelSize, labelHtmlAttributes: labelHtmlAttributes, labelTextUp: labelTextUp,
+                htmlAttributes: editorHtmlAttributes, readOnly: readOnly);
+
+            return htmlHelper.FormGroupEditor(expression, editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize, labelTextUp: labelTextUp);
+        }
+
+
 
         public static MvcHtmlString BcFormGroupRadioButtonFor<TModel, TValue>(this HtmlHelper<TModel> htmlHelper,
             Expression<Func<TModel, TValue>> expression, object value, object labelHtmlAttributes = null, object editorHtmlAttributes = null, string labelText = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4)
@@ -393,14 +497,14 @@ namespace Bc.Web.Mvc.Html
         }
 
         public static MvcHtmlString BcFormGroupRadioButtonGroupFor<TModel, TValue>(this HtmlHelper<TModel> htmlHelper,
-            Expression<Func<TModel, TValue>> expression, SelectList selectList, object labelHtmlAttributes = null, object editorHtmlAttributes = null, string labelText = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4)
+            Expression<Func<TModel, TValue>> expression, SelectList selectList, object labelHtmlAttributes = null, object editorHtmlAttributes = null,
+            string labelText = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4, string name = null, bool labelTextUp = Constants.DefaultLabelPosition)
         {
-            MvcHtmlString editor = htmlHelper.BcRadioButtonGroupFor(expression, selectList, htmlAttributes: editorHtmlAttributes);
+            MvcHtmlString editor = htmlHelper.BcRadioButtonGroupFor(expression, selectList, htmlAttributes: editorHtmlAttributes, name: name);
 
-            return htmlHelper.FormGroupEditor(expression, editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize);
+            return htmlHelper.FormGroupEditor(expression, editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize, labelTextUp: labelTextUp);
         }
 
-        //todo: importante
         //public static MvcHtmlString BcFormGroupRadioButtonGroupGeneralValuesFor<TModel, TValue>(this HtmlHelper<TModel> htmlHelper,
         //    Expression<Func<TModel, TValue>> expression, short id, object labelHtmlAttributes = null, object editorHtmlAttributes = null, string labelText = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4)
         //{
@@ -411,58 +515,58 @@ namespace Bc.Web.Mvc.Html
 
 
         public static MvcHtmlString BcFormGroupDisplayFor<TModel, TValue>(this HtmlHelper<TModel> htmlHelper,
-            Expression<Func<TModel, TValue>> expression, object labelHtmlAttributes = null, object displayHtmlAttributes = null, string labelText = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool labelTextUp = false)
+            Expression<Func<TModel, TValue>> expression, object labelHtmlAttributes = null, object displayHtmlAttributes = null, string labelText = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4, bool labelTextUp = Constants.DefaultLabelPosition)
         {
             MvcHtmlString editor = htmlHelper.BcDisplayFor(expression, htmlAttributes: displayHtmlAttributes);
 
             return htmlHelper.FormGroupEditor(expression, editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize, labelTextUp);
         }
 
-        public static MvcHtmlString BcFormGroupDisplayFor<TModel>(this HtmlHelper<TModel> htmlHelper,
-            Expression<Func<TModel, Boolean>> expression, object labelHtmlAttributes = null, object displayHtmlAttributes = null, string labelText = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4)
-        {
-            MvcHtmlString editor = htmlHelper.BcDisableCheckBoxFor(expression, htmlAttributes: displayHtmlAttributes);
+        //public static MvcHtmlString BcFormGroupDisplayFor<TModel>(this HtmlHelper<TModel> htmlHelper,
+        //    Expression<Func<TModel, Boolean>> expression, object labelHtmlAttributes = null, object displayHtmlAttributes = null, string labelText = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4)
+        //{
+        //    MvcHtmlString editor = htmlHelper.BcDisableCheckBoxFor(expression, htmlAttributes: displayHtmlAttributes);
 
-            return htmlHelper.FormGroupEditor(expression, editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize);
-        }
+        //    return htmlHelper.FormGroupEditor(expression, editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize);
+        //}
 
-        public static MvcHtmlString BcFormGroupDisplayFor<TModel>(this HtmlHelper<TModel> htmlHelper,
-            Expression<Func<TModel, DateTime?>> expression, object labelHtmlAttributes = null, object displayHtmlAttributes = null, string labelText = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4)
-        {
-            Func<TModel, DateTime?> method = expression.Compile();
-            DateTime? value = method(htmlHelper.ViewData.Model);
+        //public static MvcHtmlString BcFormGroupDisplayFor<TModel>(this HtmlHelper<TModel> htmlHelper,
+        //    Expression<Func<TModel, DateTime?>> expression, object labelHtmlAttributes = null, object displayHtmlAttributes = null, string labelText = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4)
+        //{
+        //    Func<TModel, DateTime?> method = expression.Compile();
+        //    DateTime? value = method(htmlHelper.ViewData.Model);
 
-            var expression2 = (MemberExpression)expression.Body;
-            string name = expression2.Member.Name;
+        //    var expression2 = (MemberExpression)expression.Body;
+        //    string name = expression2.Member.Name;
 
 
-            string textValue = "";
-            if (value.HasValue)
-            {
-                textValue = value.Value.Date == value.Value ? value.Value.ToDefaultDateFormat() : value.Value.ToDefaultDateTimeFormat();
-            }
+        //    string textValue = "";
+        //    if (value.HasValue)
+        //    {
+        //        textValue = value.Value.Date == value.Value ? value.Value.ToDefaultDateFormat() : value.Value.ToDefaultDateTimeFormat();
+        //    }
 
-            MvcHtmlString editor = htmlHelper.BcTextBox(name, textValue, htmlAttributes: displayHtmlAttributes, readOnly: true);
+        //    MvcHtmlString editor = htmlHelper.BcTextBox(name, textValue, htmlAttributes: displayHtmlAttributes, readOnly: true);
 
-            return htmlHelper.FormGroupEditor(expression, editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize);
-        }
+        //    return htmlHelper.FormGroupEditor(expression, editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize);
+        //}
 
-        public static MvcHtmlString BcFormGroupDisplayFor<TModel>(this HtmlHelper<TModel> htmlHelper,
-            Expression<Func<TModel, DateTime>> expression, object labelHtmlAttributes = null, object displayHtmlAttributes = null, string labelText = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4)
-        {
-            Func<TModel, DateTime> method = expression.Compile();
-            DateTime? value = method(htmlHelper.ViewData.Model);
+        //public static MvcHtmlString BcFormGroupDisplayFor<TModel>(this HtmlHelper<TModel> htmlHelper,
+        //    Expression<Func<TModel, DateTime>> expression, object labelHtmlAttributes = null, object displayHtmlAttributes = null, string labelText = null, HtmlColumnSize labelSize = HtmlColumnSize.Size_4)
+        //{
+        //    Func<TModel, DateTime> method = expression.Compile();
+        //    DateTime? value = method(htmlHelper.ViewData.Model);
 
-            var expression2 = (MemberExpression)expression.Body;
-            string name = expression2.Member.Name;
+        //    var expression2 = (MemberExpression)expression.Body;
+        //    string name = expression2.Member.Name;
 
-            string textValue = "";
+        //    string textValue = "";
 
-            textValue = value.Value.Date == value.Value ? value.Value.ToDefaultDateFormat() : value.Value.ToDefaultDateTimeFormat();
+        //    textValue = value.Value.Date == value.Value ? value.Value.ToDefaultDateFormat() : value.Value.ToDefaultDateTimeFormat();
 
-            MvcHtmlString editor = htmlHelper.BcTextBox(name, textValue, htmlAttributes: displayHtmlAttributes, readOnly: true);
+        //    MvcHtmlString editor = htmlHelper.BcTextBox(name, textValue, htmlAttributes: displayHtmlAttributes, readOnly: true);
 
-            return htmlHelper.FormGroupEditor(expression, editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize);
-        }
+        //    return htmlHelper.FormGroupEditor(expression, editor.ToString(), labelHtmlAttributes: labelHtmlAttributes, labelText: labelText, labelSize: labelSize);
+        //}
     }
 }

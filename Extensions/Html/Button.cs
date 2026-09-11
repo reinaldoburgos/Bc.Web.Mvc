@@ -9,29 +9,30 @@ namespace Bc.Web.Mvc.Html
 {
     public static class ButtonExtensions
     {
-        internal static string ButtonString(string text, HtmlElementSize size, bool includeText = true, 
+        internal static string ButtonString(string text, HtmlElementSize size, bool includeText = true,
             string iconClass = null, bool submit = false, ElementThemeType themeType = ElementThemeType.Primary,
             bool blockButton = false, string actionName = null, string toolTip = null,
-            string customButtonClick = null, string target = null, object htmlAttributes = null, bool allowCloseModal = false, 
+            string customButtonClick = null, string target = null, object htmlAttributes = null, bool allowCloseModal = false,
             string targetModal = null)
         {
-            
+
             TagBuilder tagButton = null;
-            
+
 
             if (submit)
             {
                 tagButton = new TagBuilder("input");
-                tagButton.Attributes.Add("type", "submit");        
-                tagButton.Attributes.Add("value",text);
+                tagButton.Attributes.Add("type", "submit");
+                tagButton.Attributes.Add("value", text);
             }
             else
             {
                 tagButton = new TagBuilder("button");
+                tagButton.Attributes.Add("type", "button");
                 string icon = "";
-                if(!string.IsNullOrWhiteSpace(iconClass))
+                if (!string.IsNullOrWhiteSpace(iconClass))
                     icon = IconExtensions.BcIcon(iconClass).ToString();
-                
+
                 if (!string.IsNullOrWhiteSpace(icon) && !string.IsNullOrWhiteSpace(text))
                     icon += " ";
 
@@ -50,7 +51,7 @@ namespace Bc.Web.Mvc.Html
 
             if (allowCloseModal)
             {
-                tagButton.Attributes.Add("data-dismiss","modal");
+                tagButton.Attributes.Add("data-dismiss", "modal");
                 tagButton.AddCssClass("md-close");
                 if (string.IsNullOrWhiteSpace(customButtonClick))
                 {
@@ -63,13 +64,13 @@ namespace Bc.Web.Mvc.Html
             if (!string.IsNullOrWhiteSpace(targetModal))
             {
                 tagButton.Attributes.Add("data-modal", targetModal);
-                if(string.IsNullOrEmpty(customButtonClick))
+                if (string.IsNullOrEmpty(customButtonClick))
                 {
                     customButtonClick = "return false;";
                 }
                 tagButton.AddCssClass("md-trigger");
             }
-            
+
             if (!string.IsNullOrEmpty(customButtonClick))
                 tagButton.Attributes.Add("onclick", customButtonClick);
             else if (!string.IsNullOrEmpty(target))
@@ -77,34 +78,34 @@ namespace Bc.Web.Mvc.Html
 
             if (!String.IsNullOrEmpty(toolTip))
                 tagButton.Attributes.Add("title", toolTip);
-            
-            if(!string.IsNullOrEmpty(actionName))
+
+            if (!string.IsNullOrEmpty(actionName))
                 tagButton.Attributes.Add("action", actionName);
 
             tagButton.AddCssClass(Constants.Style.ElementClass.ButtonClass);
-            if(blockButton)
+            if (blockButton)
                 tagButton.AddCssClass(Constants.Style.ElementClass.BlockButtonClass);
 
-            tagButton.AddCssClass(BcHelper.GetButtonSizeClass(size));                        
+            tagButton.AddCssClass(BcHelper.GetButtonSizeClass(size));
 
-            return tagButton.ToString();            
+            return tagButton.ToString();
         }
-        
+
         public static MvcHtmlString BcTextButton(this HtmlHelper htmlHelper, string text, HtmlElementSize size = HtmlElementSize.Default,
             bool submit = false, ElementThemeType themeType = ElementThemeType.Primary, bool blockButton = false,
             object htmlAttributes = null, bool modalButton = false, string targetModal = null)
-        {            
+        {
             return MvcHtmlString.Create(ButtonString(text, size, includeText: true, iconClass: null, submit: submit,
-                themeType : themeType, blockButton: blockButton, htmlAttributes: htmlAttributes, 
+                themeType: themeType, blockButton: blockButton, htmlAttributes: htmlAttributes,
                 allowCloseModal: modalButton, targetModal: targetModal));
-        }        
+        }
 
         public static MvcHtmlString BcIconButton(this HtmlHelper htmlHelper, string iconClass, HtmlElementSize size = HtmlElementSize.Default,
             bool submit = false, ElementThemeType themeType = ElementThemeType.Primary,
             bool blockButton = false, object htmlAttributes = null, bool allowCloseModal = false, string targetModal = null)
         {
-            return MvcHtmlString.Create(ButtonString(null, size, includeText: false, iconClass: iconClass, submit: submit, 
-                themeType : themeType,blockButton: blockButton, htmlAttributes: htmlAttributes,
+            return MvcHtmlString.Create(ButtonString(null, size, includeText: false, iconClass: iconClass, submit: submit,
+                themeType: themeType, blockButton: blockButton, htmlAttributes: htmlAttributes,
                 allowCloseModal: allowCloseModal, targetModal: targetModal));
         }
 
@@ -112,44 +113,44 @@ namespace Bc.Web.Mvc.Html
            bool submit = false, ElementThemeType themeType = ElementThemeType.Primary, bool blockButton = false,
             object htmlAttributes = null, bool allowCloseModal = false, string targetModal = null)
         {
-            return MvcHtmlString.Create(ButtonString(null, size, includeText: false, iconClass: icon.GetID(), submit: submit, themeType : themeType,
+            return MvcHtmlString.Create(ButtonString(null, size, includeText: false, iconClass: icon.GetID(), submit: submit, themeType: themeType,
                 blockButton: blockButton, htmlAttributes: htmlAttributes, allowCloseModal: allowCloseModal, targetModal: targetModal));
         }
 
         public static MvcHtmlString BcButton(this HtmlHelper htmlHelper, string text, string iconClass, HtmlElementSize size = HtmlElementSize.Default,
-            bool includeText = true, bool submit = false,ElementThemeType themeType = ElementThemeType.Primary,
+            bool includeText = true, bool submit = false, ElementThemeType themeType = ElementThemeType.Primary,
             bool blockButton = false, string actionName = null, string customButtonClick = null, string target = null,
             object htmlAttributes = null, bool allowCloseModal = false, string targetModal = null)
         {
-            return MvcHtmlString.Create(ButtonString(text, size, includeText: true, iconClass: iconClass, submit: submit, themeType : themeType,blockButton: blockButton,
-                actionName: actionName, customButtonClick: customButtonClick, target: target, htmlAttributes : htmlAttributes,
+            return MvcHtmlString.Create(ButtonString(text, size, includeText: includeText, iconClass: iconClass, submit: submit, themeType: themeType, blockButton: blockButton,
+                actionName: actionName, customButtonClick: customButtonClick, target: target, htmlAttributes: htmlAttributes,
                 allowCloseModal: allowCloseModal, targetModal: targetModal));
         }
 
         public static MvcHtmlString BcButton(this HtmlHelper htmlHelper, string text, HtmlElementSize size = HtmlElementSize.Default,
-            Icons? icon = null, bool includeText = true, bool submit = false,ElementThemeType themeType = ElementThemeType.Primary,
-            bool blockButton = false, string actionName = null, string customButtonClick = null, string target = null,
+            Icons? icon = null, bool includeText = true, bool submit = false, ElementThemeType themeType = ElementThemeType.Primary,
+            bool blockButton = false, string actionName = null, string toolTip = null, string customButtonClick = null, string target = null,
             object htmlAttributes = null, bool allowCloseModal = false, string targetModal = null)
         {
-            return MvcHtmlString.Create(ButtonString(text, size, includeText: true, iconClass: icon==null?"":icon.GetID(), submit: submit, themeType : themeType, blockButton: blockButton,
-                actionName: actionName, customButtonClick: customButtonClick, target: target,
+            return MvcHtmlString.Create(ButtonString(text, size, includeText: includeText, iconClass: icon == null ? "" : icon.GetID(), submit: submit, themeType: themeType, blockButton: blockButton,
+                actionName: actionName, toolTip: toolTip, customButtonClick: customButtonClick, target: target,
                 htmlAttributes: htmlAttributes, allowCloseModal: allowCloseModal, targetModal: targetModal));
         }
 
-     //   public static MvcHtmlString BcActionButton(this HtmlHelper helper, string text, string action, string controller, object routeValues = null,
-     //Bc.Web.Mvc.Html.HtmlElementSize size = HtmlElementSize.Default, bool includeText = true, Icons? icon = null, ElementThemeType themeType = ElementThemeType.Primary)
-     //   {
-     //       StringBuilder button = new StringBuilder();
-           
-     //           button.AppendFormat("<a href=\"{0}\">{1}</a>", Bc.Web.Mvc.Utility.UrlHelper.GetFromContext().Action(
-     //               action,
-     //               controller, routeValues), ButtonString(text, size, includeText, iconClass: icon == null ? "" : icon.GetID(), themeType: themeType));
+        //   public static MvcHtmlString BcActionButton(this HtmlHelper helper, string text, string action, string controller, object routeValues = null,
+        //Bc.Web.Mvc.Html.HtmlElementSize size = HtmlElementSize.Default, bool includeText = true, Icons? icon = null, ElementThemeType themeType = ElementThemeType.Primary)
+        //   {
+        //       StringBuilder button = new StringBuilder();
+
+        //           button.AppendFormat("<a href=\"{0}\">{1}</a>", Bc.Web.Mvc.Utility.UrlHelper.GetFromContext().Action(
+        //               action,
+        //               controller, routeValues), ButtonString(text, size, includeText, iconClass: icon == null ? "" : icon.GetID(), themeType: themeType));
 
 
-     //           return MvcHtmlString.Create(button.ToString());
-     //   }
+        //           return MvcHtmlString.Create(button.ToString());
+        //   }
 
-        
+
         //public static MvcHtmlString BcBasicButton(this HtmlHelper htmlHelper, ActivityActions activityAction, 
         //    ElementThemeType? themeType = null, 
         //    HtmlElementSize size = HtmlElementSize.Default,            

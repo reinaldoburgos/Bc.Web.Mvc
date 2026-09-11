@@ -22,12 +22,4 @@ Global
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FCD2D62F-6873-4BAE-88C8-4A4A545227D9}
 	EndGlobalSection
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 2
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://backcore.visualstudio.com/
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = Bc.Web.Mvc.csproj
-		SccLocalPath1 = .
-	EndGlobalSection
 EndGlobal

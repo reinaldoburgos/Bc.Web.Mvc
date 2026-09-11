@@ -17,7 +17,6 @@ namespace Bc.Web.Mvc.Helper
         {
             this.Name = name;
             this.Value = value;
-
         }
 
         public string Name { get; set; }

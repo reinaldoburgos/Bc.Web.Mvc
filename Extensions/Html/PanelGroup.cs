@@ -16,15 +16,17 @@ namespace Bc.Web.Mvc.Html
            //bool autoGridViewFixedHeight = false,
            //string gridViewFixedHeightName = null,
            //int? marginFixedHeight = null,
-           object htmlAttributes = null)
+           object htmlAttributes = null,
+           ACollection aCollection = null)
         {
-            BeginPanelGroup(htmlHelper,id, title, icon != null ? icon.GetID() : null,
-                collapse : collapse,
-                paddingContent:paddingContent,
+            BeginPanelGroup(htmlHelper, id, title, icon != null ? icon.GetID() : null,
+                collapse: collapse,
+                paddingContent: paddingContent,
                 //autoGridViewFixedHeight : autoGridViewFixedHeight,
                 //gridViewFixedHeightName: gridViewFixedHeightName,
                 //marginFixedHeight : marginFixedHeight,
-                htmlAttributes: htmlAttributes);
+                htmlAttributes: htmlAttributes,
+                aCollection: aCollection);
         }
 
         internal static void BeginPanelGroup(this System.Web.Mvc.HtmlHelper htmlHelper,
@@ -34,37 +36,54 @@ namespace Bc.Web.Mvc.Html
             // bool autoGridViewFixedHeight = false,
             //string gridViewFixedHeightName = null,
             //int? marginFixedHeight = null,
-            object htmlAttributes = null)
+            object htmlAttributes = null,
+            ACollection aCollection = null)
         {
 
             string iconHtml = string.Empty;
 
             if (iconClass != null)
             {
-                iconHtml = string.Format("<span class=\"{0} {2}\">" +
+                iconHtml = string.Format("<span class=\"{0} \">" +
                             "<i class=\"{1}\"></i>" +
                             "</span> ", Constants.Style.GeneralClass.IconClass, iconClass);
             }
 
+
+            string aHtml = string.Empty;
+
+            if (aCollection != null)
+            {
+                foreach (var a in aCollection)
+                {
+                    aHtml += $"<a href=\"{a.Href}\" title=\"{a.Title}\" onclick=\"{a.OnClick}\">" +
+                             $"<i style=\"font-size:20px;margin-left:15px\" class=\"{a.IconClass}\" aria-hidden=\"true\"></i>" +
+                             "</a>";
+                }
+            }
+
+
             string labelHtml = string.Empty;
-        
+
             string html = string.Empty;
-            
+
             string titleBlock = string.Empty;
             if (!string.IsNullOrWhiteSpace(title))
             {
-                titleBlock = string.Format("<h4 class=\"{0}\">{2}<a data-toggle = \"collapse\" href =\"#{3}-collapse\" >{1}</a></h4 >",
-                    Constants.Style.WidgetClass.PanelTitleClass,
-                    title.ToUpper(),
-                    iconHtml,
-                    id);              
+                //titleBlock = string.Format("<h4 class=\"{0}\">{2}<a data-toggle = \"collapse\" href =\"#{3}-collapse\" >{1}</a></h4 >",
+                //    Constants.Style.WidgetClass.PanelTitleClass,
+                //    title, 
+                //    iconHtml,
+                //    id);
+
+                titleBlock = $"<h4 class=\"{Constants.Style.WidgetClass.PanelTitleClass}\">{iconHtml}<a data-toggle = \"collapse\" href =\"#{id}-collapse\" >{title}</a>{aHtml}</h4>";
             }
 
             RouteValueDictionary dictionary = System.Web.Mvc.HtmlHelper.AnonymousObjectToHtmlAttributes(htmlAttributes);
             dictionary.Add("id", id);
             if (dictionary.ContainsKey("class"))
             {
-                dictionary["class"] = dictionary["class"] + Constants.Style.WidgetClass.PanelGroupClass;
+                dictionary["class"] = dictionary["class"] +" " + Constants.Style.WidgetClass.PanelGroupClass;
             }
             else
             {
@@ -95,8 +114,8 @@ namespace Bc.Web.Mvc.Html
                 Constants.Style.WidgetClass.PanelGroupHeadingClass,
                 titleBlock,
                 id,
-                (!collapse?"in":""),
-                (paddingContent?"pnpadding":""));            
+                (!collapse ? "in" : ""),
+                (paddingContent ? "pnpadding" : ""));
 
             htmlHelper.ViewContext.Writer.Write(html);
 
@@ -135,35 +154,39 @@ namespace Bc.Web.Mvc.Html
             //bool autoGridViewFixedHeight = false,
             //string gridViewFixedHeightName = null,
             //int? marginFixedHeight = null, 
-            object htmlAttributes = null)
+            object htmlAttributes = null,
+            ACollection aCollection = null)
         {
             return new MvcContent(
-                () => htmlHelper.BeginPanelGroup(id,title, iconClass: iconClass,
+                () => htmlHelper.BeginPanelGroup(id, title, iconClass: iconClass,
                 collapse: collapse,
                 paddingContent: paddingContent,
                 //autoGridViewFixedHeight : autoGridViewFixedHeight, 
                 //gridViewFixedHeightName: gridViewFixedHeightName,
-                htmlAttributes: htmlAttributes),
+                htmlAttributes: htmlAttributes,
+                aCollection: aCollection),
                 () => htmlHelper.EndPanelGroup()
             );
         }
 
         public static MvcContent BcBeginPanelGroup(this System.Web.Mvc.HtmlHelper htmlHelper,
-            string id,string title = null, Icons? icon = null, 
+            string id, string title = null, Icons? icon = null,
             bool collapse = false,
             bool paddingContent = true,
             //bool autoGridViewFixedHeight = false,
             //string gridViewFixedHeightName = null,
             //int? marginFixedHeight = null,
-            object htmlAttributes = null)
+            object htmlAttributes = null,
+            ACollection aCollection = null)
         {
             return new MvcContent(
-                () => htmlHelper.BeginPanelGroup(id,title, icon,
-                collapse : collapse,
+                () => htmlHelper.BeginPanelGroup(id, title, icon,
+                collapse: collapse,
                 paddingContent: paddingContent,
                 //autoGridViewFixedHeight: autoGridViewFixedHeight,
                 //gridViewFixedHeightName: gridViewFixedHeightName,
-                htmlAttributes: htmlAttributes),
+                htmlAttributes: htmlAttributes,
+                aCollection: aCollection),
                 () => htmlHelper.EndPanelGroup()
             );
         }

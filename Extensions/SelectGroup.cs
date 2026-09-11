@@ -7,7 +7,6 @@ namespace Bc.Web.Mvc
 {
     public static class SelectGroupExtensions
     {
-        //todo: importante comentado todo por EntityBase
         //public static IEnumerable<GroupedSelectListItem> ToGroupedSelectList<TEntity>(this IEnumerable<TEntity> collection,
         //    string groupValueMember, string groupDisplayMember, Func<TEntity, bool> selected = null,
         //    string valueMember = null, string displayMember = null,

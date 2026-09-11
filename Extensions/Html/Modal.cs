@@ -26,158 +26,99 @@ namespace Bc.Web.Mvc.Html
         }
 
         public static MvcContent BcBeginModal(this HtmlHelper htmlHelper, string id, string title = null,
-            ElementThemeType themeType = ElementThemeType.Primary, ModalEffect effect = ModalEffect.Fall, int? customWidth = null, bool includeOverlay = true, bool isClosable = true)
+            ElementThemeType themeType = ElementThemeType.Primary, ModalEffect effect = ModalEffect.Fall,
+            int? customWidth = null, bool isPercent = true, int? customMaxWidth = null, bool includeOverlay = true, bool isClosable = true,
+            int? zindex = null)
         {
             return new MvcContent(
-                () => htmlHelper.BeginModal(id, title, themeType, effect, customWidth, isClosable),
+                () => htmlHelper.BeginModal(id: id, title: title, themeType: themeType, effect: effect, customWidth: customWidth,
+                           isPercent: isPercent, customMaxWidth: customMaxWidth, isClosable: isClosable, zindex: zindex),
                 () => htmlHelper.EndModal(includeOverlay)
             );
         }
 
+
         internal static void BeginModal(this HtmlHelper htmlHelper, string id, string title = null,
-            ElementThemeType themeType = ElementThemeType.Primary, ModalEffect effect = ModalEffect.Default, int? customWidth = null, bool isClosable = true)
+            ElementThemeType themeType = ElementThemeType.Primary, ModalEffect effect = ModalEffect.Default,
+            int? customWidth = null, bool isPercent = true, int? customMaxWidth = null, bool isClosable = true, int? zindex = null)
         {
             StringBuilder html = new StringBuilder();
             string customWidthStyle = "";
             string displayClosable = "none";
+            string maxWidth = "90%";
+            string Width = "90%";
+            string customZIndex = "";
+
             if (customWidth.HasValue)
-                customWidthStyle = string.Format("style=\"width:{0}px; max-width:{0}px;\"", customWidth);
+                Width = Convert.ToString(customWidth) + (isPercent ? "%" : "px");
+
+            if (customMaxWidth.HasValue)
+                maxWidth = Convert.ToString(customMaxWidth) + "%";
+
+            // hay que tener cuidado con esta z-index, cuando le di un valor alto dejo de funcionar el Select2
+            if (zindex.HasValue)
+                customZIndex = $"style=\"z-index: {zindex};\"";
+
+            customWidthStyle = $"style=\"width:{Width}; max-width:{maxWidth}\"";
 
             if (isClosable)
                 displayClosable = "block";
 
-            //html.AppendFormat("<div class=\"md-modal {1} {2} {3}\" {4} id=\"{0}\" >", id,
-            //     string.IsNullOrWhiteSpace(title) ? "" : "colored-header", effect.GetID(), themeType.GetID(), customWidthStyle);
-            ////html.AppendLine("<div class=\"modal-dialog\">");
-            //html.AppendLine("<div class=\"md-content\" " + customWidthStyle + ">");
-            //html.AppendLine("<div class=\"modal-content\" " + customWidthStyle + ">");
-            //html.AppendLine("<div class=\"modal-header\">");
-
-
-            html.AppendFormat("<div id=\"{0}\" class=\"modal bootstrap-dialog set-dialog type-primary fade size-normal in \" role=\"dialog\" aria-hidden=\"true\" >", id);
+            html.AppendFormat("<div id=\"{0}\" class=\"modal bootstrap-dialog set-dialog type-{2} fade size-normal in \" role=\"dialog\" aria-hidden=\"true\" {1} >", id, customZIndex, themeType.GetID());
             html.AppendFormat("<div class=\"modal-dialog\" {0}>", customWidthStyle);
             html.AppendLine("<div class=\"modal-content\">");
-
             html.AppendLine("<div class=\"modal-header bootstrap-dialog-draggable\">");
             html.AppendLine("<div class=\"bootstrap-dialog-header\">");
             html.AppendFormat("<div class=\"bootstrap-dialog-close-button\" style=\"display: {0};\">", displayClosable);
-            html.AppendLine("<button class=\"close\" data-dismiss=\"modal\">×</button>");
+            html.AppendLine("<button class=\"close\" data-dismiss=\"modal\">X</button>");
             html.AppendLine("</div>");
             html.AppendLine("<div class=\"bootstrap-dialog-title\">");
             if (!string.IsNullOrWhiteSpace(title))
+            {
                 html.AppendLine(title);
+            }
             html.AppendLine("</div>");
             html.AppendLine(" </div>");
             html.AppendLine(" </div>");
 
-            html.AppendLine("<div class=\"modal-body\">");
-            html.AppendLine("<div class=\"bootstrap-dialog-body\">");
-            html.AppendLine("<div class=\"bootstrap-dialog-message\">");
+            //html.AppendLine("<div class=\"modal-body\" style=\"display:block;\">");
+            //html.AppendFormat("<div class=\"row\" id=\"{0}-content\" style=\"height:auto;\">", id);
 
-
-            html.AppendFormat("<div id=\"{0}-content\">", id);
-
-            // html.AppendLine("Esta seguro que desea transferir");
-            html.AppendLine("</div>");
-            html.AppendLine("</div>");
-            html.AppendLine("</div>");
-            html.AppendLine("</div>");
-
-
-            //html.AppendLine("<div class=\"modal-footer\" style=\"display: block;\">");
-            //html.AppendLine("<div class=\"bootstrap-dialog-footer\">");
-            //html.AppendLine("<div class=\"bootstrap-dialog-footer-buttons\">");
-            //html.AppendLine("<button class=\"btn btn-default\" >Cancelar</button>");
-            //html.AppendLine("<button class=\"btn btn-primary\" >Grabar</button>");
-            //html.AppendLine("</div>");
-            //html.AppendLine("</div>");
-
-            //html.AppendLine("</div>");
-            html.AppendLine("</div>");
-            html.AppendLine("</div>");
-    
-
-
-
-
-
-
-            /*
-             
-             <div class="modal bootstrap-dialog set-dialog type-primary fade size-normal in" role="dialog" aria-hidden="true"
-     id="f97083f5-57fa-43fa-957c-bd35ff56a58f" aria-labelledby="f97083f5-57fa-43fa-957c-bd35ff56a58f_title" tabindex="-1"
-     style="z-index: 1050; display: block; padding-right: 17px;">
-    <div class="modal-dialog" style="top: 179px; left: 21px;">
-        <div class=\"modal-content\">
-            <div class=\"modal-header bootstrap-dialog-draggable\">
-                <div class=\\"bootstrap-dialog-header\\">
-                    <div class=\"bootstrap-dialog-close-button\" style=\"display: none;\">
-                        <button class=\"close\">×</button>
-                    </div>
-                    <div class=\"bootstrap-dialog-title\" id=\"f97083f5-57fa-43fa-957c-bd35ff56a58f_title\">
-                        Transferir ticket
-                    </div>
-                </div>
-            </div>
-            <div class=\"modal-body\">
-                <div class=\"bootstrap-dialog-body\">
-                    <div class=\"bootstrap-dialog-message\">
-                        Esta seguro que desea transferir
-                    </div>
-                </div>
-            </div>
-            <div class=\"modal-footer\" style=\"display: block;\">
-                <div class=\"bootstrap-dialog-footer\">
-                    <div class=\"bootstrap-dialog-footer-buttons\">
-                        <button class=\"btn btn-default\" id=\"43c95d8f-bf6b-4b5d-b853-961b12d561ae\">No</button>
-                        <button class=\"btn btn-primary\" id=\"ad6e1a73-1d8a-48af-96b9-5e17381a890c\">Si</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-             
-             
-             */
-
-
-
-
-
-            // < div id = 'myModal' class='modal' style="text-align:right;">
-            //    <div class="modal-dialog" style="width:900px; height:400px; padding:10px;">
-            //        <div class="modal-content" style="overflow: auto; padding:10px; background-color:#d2f5f4;">
-            //            <button type = "button" id="closbtn" onclick="$('#myModal').modal('hide');">x</button>
-            //            <div style = "height:10px;" >
-            //            </ div >
-            //            < div id='myModalContent' style="width:850px; height:400px; padding:10px;">
-            //            </div>
-            //        </div>
-            //    </div>
-            //</div>
-
-            //if (!string.IsNullOrWhiteSpace(title))
-            //{
-            //    html.AppendFormat("<h3>{0}</h3>", title);
-            //}
-
-            //html.AppendLine("<button type=\"button\" class=\"close md-close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button>");
-
-
-            //html.AppendLine("</div>"); //header            
-            //html.AppendLine("<div class=\"modal-body\">");
-
-            //string trigger = htmlHelper.BcModalHiddenTrigger(id + "-trigger", id).ToString();
-
-            // htmlHelper.ViewContext.Writer.Write(trigger + html.ToString());
             htmlHelper.ViewContext.Writer.Write(html.ToString());
         }
 
         internal static void EndModal(this HtmlHelper htmlHelper, bool includeOverlay = true)
         {
-            //htmlHelper.ViewContext.Writer.Write("</div></div></div>" + (includeOverlay ? htmlHelper.BcModalOverlay().ToString() : ""));
+            htmlHelper.ViewContext.Writer.Write("</div></div></div>" + (includeOverlay ? htmlHelper.BcModalOverlay().ToString() : ""));
         }
+
+
+        public static MvcContent BcBeginModalBody(this HtmlHelper htmlHelper, string id, int? viewHeight = null)
+        {
+            return new MvcContent(
+                () => htmlHelper.BeginModalBody(id, viewHeight),
+                () => htmlHelper.EndModalBody()
+            );
+        }
+
+        internal static void BeginModalBody(this HtmlHelper htmlHelper, string id, int? viewHeight = null)
+        {
+            string height = string.Empty;
+            if (Convert.ToInt32(viewHeight) > 0)
+                height = $"height:{viewHeight}vh; overflow-y:auto";
+
+            StringBuilder html = new StringBuilder();
+            html.AppendLine($"<div class=\"modal-body\" style=\"display:block; {height}\">");
+            html.AppendFormat("<div class=\"row\" id=\"{0}-content\" style=\"height:auto;\">", id);
+
+            htmlHelper.ViewContext.Writer.Write(html.ToString());
+        }
+
+        internal static void EndModalBody(this HtmlHelper htmlHelper)
+        {
+            htmlHelper.ViewContext.Writer.Write("</div></div>");
+        }
+
 
         public static MvcContent BcBeginModalAction(this HtmlHelper htmlHelper)
         {

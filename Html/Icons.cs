@@ -15,6 +15,8 @@ namespace Bc.Web.Mvc.Html
         AreaChart,
         [ID("fa fa-arrows-v")]
         ArrowsV,
+        [ID("fa fa-ban")]
+        CancelCircle,
         [ID("fa fa-check")]
         Check,
         [ID("fa fa-check-square")]
@@ -35,8 +37,12 @@ namespace Bc.Web.Mvc.Html
         Calendar,
         [ID("fa fa-cogs")]
         Cogs,
+        [ID("fa fa-expand")]
+        Expand,
         [ID("fa fa-eye")]
         Eye,
+        [ID("fa fa-font")]
+        Font,
         [ID("fa fa-comment")]
         Comment,
         [ID("fa fa-times")]
@@ -45,7 +51,9 @@ namespace Bc.Web.Mvc.Html
         Remove,
         [ID("fa fa-map-marker")]
         MapMarker,
-        [ID("fa fa-edit")]        
+        [ID("fa fa-envelope")]
+        Mail,
+        [ID("fa fa-edit")]
         Edit2,
         [ID("fa fa-pencil-square-o")]
         Edit,
@@ -73,6 +81,8 @@ namespace Bc.Web.Mvc.Html
         History,
         [ID("fa fa-mail-reply")]
         Reply,
+        [ID("fa fa-search")]
+        Search,
         [ID("fa fa-link")]
         Link,
         [ID("fa fa-chain-broken")]
@@ -81,7 +91,7 @@ namespace Bc.Web.Mvc.Html
         File,
         //[ID("fa fa-file-excel-o")]
         [ID("fa fa-file-o")]
-        Excel,        
+        Excel,
         [ID("fa fa-print")]
         Print,
         [ID("fa fa-trash-o")]
@@ -90,9 +100,25 @@ namespace Bc.Web.Mvc.Html
         ArrowRight,
         [ID("fa fa-arrow-left")]
         ArrowLeft,
+        [ID("fa fa-arrow-down")]
+        ArrowDown,
+        [ID("fa fa-arrow-up")]
+        ArrowUp,
         [ID("fa fa-folder-open-o")]
         Open,
         [ID("fa fa-paper-plane-o")]
-        Send        
+        Send,
+        [ID("fa fa-subscript")]
+        Subscript,
+        [ID("fa fa-level-down")]
+        LevelDown,
+        [ID("fa fa-level-up")]
+        LevelUp,
+        [ID("fa fa-user")]
+        User,
+        [ID("fa fa-sort-numeric-asc")]
+        SortNumericAsc,
+        [ID("fa fa-sort-alpha-asc")]
+        SortAlphaAsc
     }
 }

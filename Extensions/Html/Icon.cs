@@ -18,14 +18,14 @@ namespace Bc.Web.Mvc.Html
             return new MvcHtmlString(string.Format("<i class=\"{0}\"></i>", icon.GetID()));
         }
 
-        public static MvcHtmlString BcIcon(string iconClass)
+        public static MvcHtmlString BcIcon(string iconClass2)
         {
-            return new MvcHtmlString(string.Format("<i class=\"{0}\"></i>", iconClass));
+            return new MvcHtmlString(string.Format("<i class=\"{0}\"></i>", iconClass2));
         }
 
-        public static MvcHtmlString BcIcon(Icons icon)
+        public static MvcHtmlString BcIcon(Icons icon2)
         {
-            return new MvcHtmlString(string.Format("<i class=\"{0}\"></i>", icon.GetID()));
+            return new MvcHtmlString(string.Format("<i class=\"{0}\"></i>", icon2.GetID()));
         }
     }
 }

@@ -25,6 +25,8 @@ namespace Bc.Web.Mvc.Html
                 new { @class = Constants.Style.ElementClass.FormClass },
                 htmlAttributes);
 
+            resulthtmlAttributes["onsubmit"] = "return false;";
+
             RouteValueDictionary route = routeValues != null ?
                 System.Web.Mvc.HtmlHelper.AnonymousObjectToHtmlAttributes(routeValues) : null;
 

@@ -17,7 +17,7 @@ namespace Bc.Runtime
                 else
                     return 0;
             }
-        }        
+        }
 
         public static int RoleId
         {
@@ -32,19 +32,9 @@ namespace Bc.Runtime
 
         public static DateTime GetCurrentDateTime()
         {
-            //todo: importante
-            //if (Bc.Configuration.BcConfigurationSection.Current.IsDataProvider && Bc.Configuration.BcConfigurationSection.Current.UseDbDateTime)
-            //{
-            //    Bc.Data.DbConnection.DbContextManagerService db = new Data.DbConnection.DbContextManagerService();
-            //    return db.GeneralServices.GetCurrentDateTime();
-            //}
-            //else
-            //{
-                TimeZoneInfo.GetSystemTimeZones();
-                TimeZoneInfo nzTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SA Pacific Standard Time");
-                return TimeZoneInfo.ConvertTimeFromUtc(DateTime.Now.ToUniversalTime(), nzTimeZone);
-            //}
-           
+            TimeZoneInfo.GetSystemTimeZones();
+            TimeZoneInfo nzTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SA Pacific Standard Time");
+            return TimeZoneInfo.ConvertTimeFromUtc(DateTime.Now.ToUniversalTime(), nzTimeZone);
         }
     }
 }

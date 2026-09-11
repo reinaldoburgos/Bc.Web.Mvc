@@ -29,6 +29,7 @@ namespace Bc.Web.Mvc.Utility
             {
                 foreach (var attr in dictionary2)
                 {
+
                     if (!dictionary1.ContainsKey(attr.Key))
                     {
                         dictionary1.Add(attr.Key, attr.Value);

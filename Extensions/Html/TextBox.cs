@@ -38,6 +38,7 @@ namespace Bc.Web.Mvc.Html
             string format = null, bool readOnly = false, TextAlign textAlign = TextAlign.Left)
         {
             var editorAttr = GetResultHtmlAttributes(htmlAttributes, readOnly, textAlign: textAlign);
+            editorAttr.Add("bcType", "TextBox");
 
             string editor = htmlHelper.TextBox(name, value, htmlAttributes: editorAttr, format: format).ToString();
 
@@ -71,26 +72,30 @@ namespace Bc.Web.Mvc.Html
 
         public static MvcHtmlString BcTextBoxFor<TModel, TValue>(this HtmlHelper<TModel> htmlHelper,
            Expression<Func<TModel, TValue>> expression, object htmlAttributes = null, string format = null, bool readOnly = false,
-            bool includeMessageValidation = true, TextAlign textAlign = TextAlign.Left)
+            bool includeMessageValidation = true, TextAlign textAlign = TextAlign.Left, bool toUpperCase = false)
         {
             RouteValueDictionary dictionary = System.Web.Mvc.HtmlHelper.AnonymousObjectToHtmlAttributes(htmlAttributes);
 
             return htmlHelper.BcTextBoxFor(expression, htmlAttributes: dictionary, format: format, readOnly: readOnly,
-                includeMessageValidation: includeMessageValidation, textAlign: textAlign);
+                includeMessageValidation: includeMessageValidation, textAlign: textAlign, toUpperCase: toUpperCase);
         }
 
         public static MvcHtmlString BcTextBoxFor<TModel, TValue>(this HtmlHelper<TModel> htmlHelper,
            Expression<Func<TModel, TValue>> expression, IDictionary<string, object> htmlAttributes, string format = null, bool readOnly = false,
-            bool includeMessageValidation = true, TextAlign textAlign = TextAlign.Left)
+            bool includeMessageValidation = true, TextAlign textAlign = TextAlign.Left, bool toUpperCase = false)
         {
-            var editorAttr = GetResultHtmlAttributes(htmlAttributes, readOnly);
+            var editorAttr = GetResultHtmlAttributes(htmlAttributes, readOnly, toUpperCase: toUpperCase);
+
 
             string editor = htmlHelper.TextBoxFor(expression, htmlAttributes: editorAttr, format: format).ToString();
+            editor = Helper.Utils.ReplaceNameAttributes(htmlHelper, expression, editor, editorAttr);
 
             string validationMessage = string.Empty;
             if (includeMessageValidation)
+            {
                 validationMessage = htmlHelper.BcValidationMessageFor(expression).ToString();
-
+                validationMessage = Helper.Utils.ReplaceNameAttributes(htmlHelper, expression, validationMessage, editorAttr);
+            }
             return MvcHtmlString.Create(editor.ToString() + validationMessage.ToString());
         }
 
@@ -155,7 +160,7 @@ namespace Bc.Web.Mvc.Html
            Expression<Func<TModel, TValue>> expression, IDictionary<string, object> htmlAttributes,
             bool includeMessageValidation = true, byte? precision = null,
             NumericType numericType = NumericType.Number, bool nullable = true, string currencySymbol = null,
-            TextAlign textAlign = TextAlign.Right, bool readOnly = false)
+            TextAlign textAlign = TextAlign.Right, bool readOnly = false, bool labelTextUp = Constants.DefaultLabelPosition)
         {
             var editorAttr = GetResultHtmlAttributes(htmlAttributes, isNumeric: true, nullable: nullable,
                 numericType: numericType, precision: precision, currencySymbol: currencySymbol, textAlign: textAlign);
@@ -165,7 +170,7 @@ namespace Bc.Web.Mvc.Html
 
         private static IDictionary<string, object> GetResultHtmlAttributes(IDictionary<string, object> htmlAttributes = null,
             bool readOnly = false, bool isNumeric = false, bool nullable = true, TextAlign textAlign = TextAlign.Left,
-            NumericType numericType = NumericType.Number, byte? precision = null, string currencySymbol = null)
+            NumericType numericType = NumericType.Number, byte? precision = null, string currencySymbol = null, bool toUpperCase = false)
         {
             var editorAttr = Bc.Web.Mvc.Utility.HtmlHelper.MergeAnonymousObjectHtmlAttributes(
                 new { @class = Constants.Style.ElementClass.TextBoxClass + " " + Constants.Style.InputSizeClass.Default },
@@ -173,6 +178,10 @@ namespace Bc.Web.Mvc.Html
 
             if (readOnly)
                 editorAttr.Add(new KeyValuePair<string, object>("readonly", ""));
+
+            if (toUpperCase)
+                editorAttr.Add(new KeyValuePair<string, object>("oninput", "this.value = this.value.toUpperCase()"));
+
 
             string alignClass = "";
             switch (textAlign)
@@ -196,11 +205,11 @@ namespace Bc.Web.Mvc.Html
             if (isNumeric)
             {
                 if (editorAttr.ContainsKey("class"))
-                    editorAttr["class"] += " BcNumericInput";
+                    editorAttr["class"] += " bcNumericInput";
                 else
-                    editorAttr.Add("class", "BcNumericInput");
+                    editorAttr.Add("class", "bcNumericInput");
 
-                editorAttr.Add("BcNumericInput-Nullable", nullable.ToString().ToLower());
+                editorAttr.Add("bcNumericInput-Nullable", nullable.ToString().ToLower());
 
                 if (currencySymbol == null)
                     currencySymbol = System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.CurrencySymbol;
@@ -209,10 +218,10 @@ namespace Bc.Web.Mvc.Html
                 {
                     precision = 2;
                 }
-                editorAttr.Add("BcNumericInput-DecimalPrecision", precision);
+                editorAttr.Add("bcNumericInput-DecimalPrecision", precision);
 
-                editorAttr.Add("BcNumericInput-NumericType", numericType.GetID());
-                editorAttr.Add("BcNumericInput-CurrencySymbol", currencySymbol);
+                editorAttr.Add("bcNumericInput-NumericType", numericType.GetID());
+                editorAttr.Add("bcNumericInput-CurrencySymbol", currencySymbol);
             }
 
             if (!editorAttr.ContainsKey("autocomplete"))

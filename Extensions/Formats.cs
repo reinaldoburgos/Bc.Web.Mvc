@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,6 +33,36 @@ namespace Bc.Web.Mvc
                 {
                     return "HH:mm";
                 }
+            }
+        }
+
+
+        public static string URL_API
+        {
+            get
+            {
+                return "http://localhost:18459/";
+                //return ConfigurationManager.AppSettings["URL_DEFAULT"];
+            }
+        }
+
+        public class Url
+        {
+            public static string SignalR
+            {
+                get
+                {
+                    return URL_API + "signalr";
+                }
+
+            }
+            public static string SignalRHub
+            {
+                get
+                {
+                    return URL_API + "signalr/hubs";
+                }
+
             }
         }
     }

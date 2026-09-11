@@ -16,10 +16,13 @@ namespace Bc.Web.Mvc.Html
                new
                {
                    @class = Constants.Style.ElementClass.SelectClass,
-                   Bc_select = useAjax ? "use-ajax" : "",
+
                    place_holder = "Seleccione un Item"
                },
                htmlAttributes);
+
+            editorAttr.Add("bcType", "Select");
+            editorAttr.Add("bc-select", useAjax ? "use-ajax" : "");
 
             string editor = htmlHelper.DropDownListFor(expression, selectList, htmlAttributes: editorAttr).ToString();
 
@@ -28,7 +31,6 @@ namespace Bc.Web.Mvc.Html
             return MvcHtmlString.Create(editor.ToString() + validationMessage.ToString());
         }
 
-        //TODO: Importante
         //public static MvcHtmlString BcDropDownListIdentificationTypeFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel,
         //    TProperty>> expression, object htmlAttributes = null, bool usePlaceHolder = false)
         //{
@@ -41,7 +43,6 @@ namespace Bc.Web.Mvc.Html
         //        editorAttr);
         //}
 
-        //todo: importante
         //public static MvcHtmlString BcDropDownListNaturalPersonIdentificationTypeFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel,
         //    TProperty>> expression, object htmlAttributes = null, bool usePlaceHolder = false)
         //{
@@ -54,7 +55,6 @@ namespace Bc.Web.Mvc.Html
         //        editorAttr);
         //}
 
-        //todo: importante
         //public static MvcHtmlString BcDropDownListLegalEntityIdentificationTypeFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel,
         //    TProperty>> expression, object htmlAttributes = null, bool usePlaceHolder = false)
         //{
@@ -67,7 +67,6 @@ namespace Bc.Web.Mvc.Html
         //        editorAttr);
         //}
 
-        //todo: importante
         //public static MvcHtmlString BcDropDownListGeneralValuesFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel,
         //    TProperty>> expression, short id, object htmlAttributes = null, Func<Bc.Web.Mvc.Helper.GeneralValues, object> sortexpression = null)
         //{
@@ -79,7 +78,6 @@ namespace Bc.Web.Mvc.Html
         //        return htmlHelper.BcDropDownListFor(expression, genaralProxy.GetGeneralValuesById(id).OrderBy(sortexpression).ToSelectList("Code", "Content"), htmlAttributes);
         //}
 
-        //todo: importante
         //public static MvcHtmlString BcDropDownListGeneralValues(this HtmlHelper htmlHelper, string name, short id, object htmlAttributes = null, string defaultValue = null, Func<Bc.Web.Mvc.Helper.GeneralValues, object> sortexpression = null)
         //{
         //    Proxies.GeneralProxy genaralProxy = new Proxies.GeneralProxy();
@@ -91,13 +89,16 @@ namespace Bc.Web.Mvc.Html
         //}
 
         public static MvcHtmlString BcDropDownList(this HtmlHelper htmlHelper,
-            IEnumerable<SelectListItem> selectList, object htmlAttributes = null, string name = "")
+            IEnumerable<SelectListItem> selectList, object htmlAttributes = null, string name = "", bool useAjax = false)
         {
             IDictionary<string, object> editorAttr = Bc.Web.Mvc.Utility.HtmlHelper.MergeAnonymousObjectHtmlAttributes(
-               new { @class = Constants.Style.ElementClass.SelectClass, Bc_select = "", place_holder = "Seleccione un Item" },
+               new { @class = Constants.Style.ElementClass.SelectClass, place_holder = "Seleccione un Item" },
                htmlAttributes);
 
-            string editor = htmlHelper.DropDownList(name, selectList, htmlAttributes: htmlAttributes).ToString();
+            editorAttr.Add("bcType", "Select");
+            editorAttr.Add("bc-select", useAjax ? "use-ajax" : "");
+
+            string editor = htmlHelper.DropDownList(name, selectList, htmlAttributes: editorAttr).ToString();
 
             return MvcHtmlString.Create(editor.ToString());
         }
@@ -224,15 +225,16 @@ namespace Bc.Web.Mvc.Html
                 Text = ""
             });
 
-            for (int year = Bc.Web.Mvc.Session.CurrentDateTime.Year;
-                    year >= Bc.Web.Mvc.Session.CurrentDateTime.Year - 110; year--)
-            {
-                items.Add(new SelectListItem()
-                {
-                    Value = year.ToString(),
-                    Text = year.ToString()
-                });
-            }
+            // RBU comentado porque daba error por la sesion
+            //for (int year = Bc.Web.Mvc.Session.CurrentDateTime.Year;
+            //        year >= Bc.Web.Mvc.Session.CurrentDateTime.Year - 110; year--)
+            //{
+            //    items.Add(new SelectListItem()
+            //    {
+            //        Value = year.ToString(),
+            //        Text = year.ToString()
+            //    });
+            //}
 
             var result = htmlHelper.DropDownListFor(expression, items, htmlAttributes);
             return result;

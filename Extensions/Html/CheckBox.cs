@@ -82,6 +82,8 @@ namespace Bc.Web.Mvc.Html
                 checkBox.AddCssClass(Bc.Web.Mvc.Html.Constants.Style.GeneralClass.DisabledClass);
 
             checkBox.Attributes.Add("type", "checkbox");
+            checkBox.Attributes.Add("bcType", "CheckBox");
+
             foreach (var attr in resulthtmlAttributes)
             {
                 checkBox.Attributes.Add(attr.Key, Convert.ToString(attr.Value));

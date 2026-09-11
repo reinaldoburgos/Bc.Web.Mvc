@@ -1,417 +1,256 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Web;
-
+using Dece.Common.Security;
 
 namespace Bc.Web.Mvc
 {
-    public class SessionKey
-    {
-        public const string RoleId = "RoleId";
-        public const string RoleName = "RoleName";
-        public const string LogonName = "LogonName";
-        public const string UserId = "UserId";
-        public const string UserFullName = "UserFullName";
-        public const string IsLogged = "IsLogged";
-        public const string OrganizationId = "OrganizationId";
-        public const string ApplicationId = "ApplicationId";
-        public const string ApplicationName = "ApplicationName";
-        public const string OrganizationName = "OrganizationName";
-        public const string UrlSecureLastAttempted = "UrlSecureLastAttempted";
-        public const string RoleApplicationOption = "RoleApplicationOption";
-        //public const string RoleApplicationOptionActivity = "RoleApplicationOptionActivity";
-        public const string FilterApplicationId = "FilterApplicationId";
-        public const string FilterApplicationName = "FilterApplicationName";
-        public const string UserPhoto = "UserPhoto";
-
-        public const string ExpirationDate = "ExpirationDate";
-        public const string PasswordTries = "PasswordTries";
-        public const string ActiveDirectoryEnabled = "ActiveDirectoryEnabled";
-
-        public const string EmailRepeatedKey = "EmailRepeated";
-        public const string UserImageHideKey = "UserImageHide";
-        public const string SendMailAppKey = "SendMailApp";
-
-        public const string SideMenuOpen = "SideMenuOpen";
-    }
     public class Session
     {
-        //todo: session
-        //public static void Start(int userId, string logonName, int roleId, int organizationId,
-        //    string userFullName = "", string roleName = "", string organizationName = "",
-        //    IEnumerable<Bc.Web.Models.Definition.ApplicationOptionActivity> applicationOptionActivities = null, 
-        //    string userPhoto = "", string authToken = "", DateTime? expirationDate = null, bool activeDirectoryEnabled = false)
-        //{
-        //    SetValue(Bc.Web.Mvc.SessionKey.IsLogged, true);
-        //    SetValue(Bc.Web.Mvc.SessionKey.UserId, userId);
-        //    SetValue(Bc.Web.Mvc.SessionKey.LogonName, logonName);
-        //    SetValue(Bc.Web.Mvc.SessionKey.RoleId, roleId);
-        //    SetValue(Bc.Web.Mvc.SessionKey.OrganizationId, organizationId);
-        //    SetValue(Bc.Web.Mvc.SessionKey.UserFullName, userFullName);
-        //    SetValue(Bc.Web.Mvc.SessionKey.RoleName, roleName);
-        //    SetValue(Bc.Web.Mvc.SessionKey.OrganizationName, organizationName);
-        //    SetValue(Bc.Web.Mvc.SessionKey.UserPhoto, userPhoto);
-        //    //todo: importante
-        //    // SetValue(Bc.Web.Keys.AuthTokenSessionKey, authToken);   
+        public bool IsStarted { get; set; }
+        public static bool IsHttpContext { get; set; }
+        public static bool ValidateActivityPermissions { get; set; }
+        public static bool IsClosing { get; set; }
+        public static string UpdaterPath { get; set; }
 
-        //    SetValue(Bc.Web.Mvc.SessionKey.RoleApplicationOption, applicationOptionActivities);
+        public bool NotificationOnLine { get; set; }
+        public bool UsaModuloIB { get; set; }
 
-        //    SetValue(Bc.Web.Mvc.SessionKey.ExpirationDate, expirationDate);
-        //    SetValue(Bc.Web.Mvc.SessionKey.PasswordTries, 0);
-        //    SetValue(Bc.Web.Mvc.SessionKey.ActiveDirectoryEnabled, activeDirectoryEnabled);
-
-        //    SetValue(Bc.Web.Mvc.SessionKey.SideMenuOpen, false);
-        //}
-
-        public static void End()
+        public void Clear()
         {
-            SetValue(Bc.Web.Mvc.SessionKey.IsLogged, false);
-            RemoveAll();
+            Current.IsStarted = false;
+            Current.currentOrganization.Id = 0;
+            Current.currentUser.LogonName = null;
+            Current.currentUser.FullName = null;
+            Current.currentConnection.Token = null;
+            Current.CurrentOption = 0;
+            Current.CurrentActivity = string.Empty;
+            Current.UsaModuloIB = false;
+
+            Current.currentProfile.IdPersona = 0;
+            Current.currentProfile.IdEstudiante = 0;
+
+            //Current.AnioLectivo = 0;
+
+            if (Current.ListAccion != null)
+                Current.ListAccion.Clear();
+
+            if (Current.ListActividad != null)
+                Current.ListActividad.Clear();
+
+            if (Current.ListOpcion != null)
+                Current.ListOpcion.Clear();
+
+            if (Current.currentProfile.EntityProfile != null)
+                Current.currentProfile.EntityProfile.Clear();
+
+            //SetSessionValue("Session", null);
         }
 
-        public static void RemoveAll()
-        {
-            HttpContext.Current.Session.Clear();
-        }
 
-        public static void Remove(params string[] exceptions)
+        //static Session current = new Session();
+
+
+        public static Session Current
         {
-            if (IsLogged)
+            get
             {
-                int userId = UserId;
-                string logonName = LogonName;
-                int roleId = RoleId;
-                int organizationId = OrganizationId;
-                string userFullName = UserFullName;
-                string roleName = RoleName;
-                string organizationName = OrganizationName;
-                //todo: session
-                //object applicationOptionActivities = ApplicationOptionActivity;
-                string filterApplicationId = FilterApplicationId;
-                string userPhoto = UserPhoto;
-                string authToken = AuthToken;
+                object session = GetSessionValue("Session");
 
-                Dictionary<string, object> backUp = null;
-                if (exceptions != null && exceptions.Any())
+                if (session == null)
                 {
-                    backUp = new Dictionary<string, object>();
-
-                    foreach (string sessionName in exceptions)
-                    {
-                        object value = GetValue(sessionName);
-                        if (value != null)
-                            backUp[sessionName] = value;
-                    }
+                    session = new Session();
+                    SetSessionValue("Session", session);
                 }
 
-                RemoveAll();
-
-                SetValue(Bc.Web.Mvc.SessionKey.IsLogged, true);
-                SetValue(Bc.Web.Mvc.SessionKey.UserId, userId);
-                SetValue(SessionKey.LogonName, logonName);
-                SetValue(SessionKey.RoleId, roleId);
-                SetValue(SessionKey.OrganizationId, organizationId);
-                SetValue(SessionKey.UserFullName, userFullName);
-                SetValue(SessionKey.RoleName, roleName);
-                SetValue(SessionKey.OrganizationName, organizationName);
-                //todo: session
-                //SetValue(SessionKey.RoleApplicationOption, applicationOptionActivities);
-                SetValue(SessionKey.FilterApplicationId, filterApplicationId);
-                SetValue(SessionKey.UserPhoto, userPhoto);
-                
-                //todo: importante
-                //SetValue(Bc.Web.Keys.AuthTokenSessionKey, authToken);
-
-                if (backUp != null)
-                {
-                    foreach (KeyValuePair<string, object> entry in backUp)
-                    {
-                        SetValue(entry.Key, entry.Value);
-                    }
-                }
+                return (Session)session;
             }
-            else
-            {
-                RemoveAll();
-            }
-        }
 
-        public static bool SideMenuOpen
-        {
-            get
-            {
-                return Convert.ToBoolean(GetValue(SessionKey.SideMenuOpen));
-            }
-        }
 
-        public static bool IsLogged
-        {
-            get
-            {
-                return Convert.ToBoolean(GetValue(SessionKey.IsLogged));
-            }
-        }
+            //get
+            //{
+            //    if (IsHttpContext)
+            //    {
+            //        object session = GetSessionValue("Session");
 
-        public static int UserId
-        {
-            get
-            {
-                return Convert.ToInt32(GetValue(SessionKey.UserId));
-            }
-        }
+            //        if (session == null)
+            //        {
+            //            session = new Session();
+            //            SetSessionValue("Session", session);
+            //        }
 
-        public static string LogonName
-        {
-            get
-            {
-                return Convert.ToString(GetValue(SessionKey.LogonName));
-            }
-        }
+            //        return (Session)session;
+            //    }
+            //    else
+            //    {
+            //        if (current == null)
+            //        {
+            //            current = new Session();
+            //        }
 
-        public static string AuthToken
-        {
-            get
-            {
-                return null;
-                //todo: importante
-                // return Convert.ToString(GetValue(Bc.Web.Keys.AuthTokenSessionKey));
-            }
-        }
+            //        return current;
+            //    }
+            //}
 
-        public static string UserFullName
-        {
-            get
+            internal set
             {
-                return Convert.ToString(GetValue(SessionKey.UserFullName));
-            }
-        }
+                SetSessionValue("Session", value);
 
-        public static string UserPhoto
-        {
-            get
-            {
-                return Convert.ToString(GetValue(SessionKey.UserPhoto));
-            }
-        }
-
-        public static int RoleId
-        {
-            get
-            {
-                return Convert.ToInt32(GetValue(SessionKey.RoleId));
-            }
-        }
-
-        public static string RoleName
-        {
-            get
-            {
-                return Convert.ToString(GetValue(SessionKey.RoleName));
-            }
-        }
-
-        public static int OrganizationId
-        {
-            get
-            {
-                return Convert.ToInt32(GetValue(SessionKey.OrganizationId));
-            }
-        }
-
-        public static string FilterApplicationId
-        {
-            get
-            {
-                return Convert.ToString(GetValue(SessionKey.FilterApplicationId));
-            }
-        }
-
-        public static string ApplicationId
-        {
-            get
-            {
-                string id = Convert.ToString(GetValue(SessionKey.ApplicationId));
-                //todo: importante
-                //if (string.IsNullOrWhiteSpace(id))
-                //    return Bc.Configuration.BcConfigurationSection.Current.Application.ApplicationId;
+                //if (IsHttpContext)
+                //{
+                //    SetSessionValue("Session", value);
+                //}
                 //else
-                    return id;
-            }
-        }
-
-        public static string ApplicationName
-        {
-            get
-            {
-                string name = Convert.ToString(GetValue(SessionKey.ApplicationName));
-                //todo: importante
-                //if (string.IsNullOrWhiteSpace(name))
                 //{
-                //    ApplicationProxy proxy = new ApplicationProxy();
-                //    var app = proxy.Get(ApplicationId);
-                //    SetValue(SessionKey.ApplicationName, app.Name);
-                //    name = app.Name;
+                //    current = value;
                 //}
-                return name;
             }
         }
 
-        public static string FilterApplicationName
+        public static object GetSessionValue(string name)
         {
-            get
-            {
-                string name = Convert.ToString(GetValue(SessionKey.FilterApplicationName));
-                //todo: importante
-                //if (name == null)
-                //{
-                //    try
-                //    {
-                //        ApplicationProxy proxy = new ApplicationProxy();
-                //        var app = proxy.Get(FilterApplicationId);
-                //        SetValue(SessionKey.FilterApplicationName, app.Name);
-                //        name = app.Name;
-                //    }
-                //    catch (Exception)
-                //    {
-                //        name = "";
-                //    }
-                //}
-                return name;
-            }
-        }
-
-        public static string OrganizationName
-        {
-            get
-            {
-                return Convert.ToString(GetValue(SessionKey.OrganizationName));
-            }
-        }
-
-        public static string UrlSecureLastAttempted
-        {
-            get
-            {
-                return Convert.ToString(GetValue(SessionKey.UrlSecureLastAttempted));
-            }
-            set
-            {
-                SetValue(SessionKey.UrlSecureLastAttempted, value);
-            }
-        }
-
-        public static DateTime CurrentDateTime
-        {
-            get
-            {
-                return Bc.Runtime.Current.GetCurrentDateTime();
-            }
-        }
-
-        public static int PasswordTries
-        {
-            get
-            {
-                object value = GetValue(SessionKey.PasswordTries);
-
-                if (value != null)
-                    return Convert.ToInt32(value);
-                else
-                    return 0;
-            }
-        }
-
-        public static DateTime? ExpirationDate
-        {
-            get
-            {
-                object value = GetValue(SessionKey.ExpirationDate);
-
-                if (value != null)
-                    return Convert.ToDateTime(value);
-                else
-                    return null;
-            }
-        }
-
-        public static bool ActiveDirectoryEnabled
-        {
-            get
-            {
-                object value = GetValue(SessionKey.ActiveDirectoryEnabled);
-
-                if (value != null)
-                    return Convert.ToBoolean(value);
-                else
-                    return false;
-            }
-        }
-
-
-        public static bool EmailRepeated
-        {
-            get
-            {
-                object value = GetValue(SessionKey.EmailRepeatedKey);
-
-                if (value != null)
-                    return Convert.ToBoolean(value);
-                else
-                    return false;
-            }
-        }
-
-        public static bool SendMailApp
-        {
-            get
-            {
-                object value = GetValue(SessionKey.SendMailAppKey);
-
-                if (value != null)
-                    return Convert.ToBoolean(value);
-                else
-                    return false;
-            }
-        }
-
-        public static bool UserImageHide
-        {
-            get
-            {
-                object value = GetValue(SessionKey.UserImageHideKey);
-
-                if (value != null)
-                    return Convert.ToBoolean(value);
-                else
-                    return false;
-            }
-        }
-        //todo: session
-        //public static List<Bc.Web.Models.Definition.ApplicationOptionActivity> ApplicationOptionActivity
-        //{
-        //    get
-        //    {
-        //        var result = (List<Bc.Web.Models.Definition.ApplicationOptionActivity>)GetValue(SessionKey.RoleApplicationOption);
-        //        if (result == null)
-        //            return new List<Bc.Web.Models.Definition.ApplicationOptionActivity>();
-        //        else
-        //            return result;
-        //    }
-        //}
-
-        public static void SetValue(string key, object value)
-        {
-            if (HttpContext.Current.Session != null)
-                HttpContext.Current.Session[key] = value;
-        }
-
-        public static object GetValue(string key)
-        {
-            if (HttpContext.Current.Session != null)
-                return HttpContext.Current.Session[key];
+            if (HttpContext.Current != null)
+                return HttpContext.Current.Session[name];
             else
                 return null;
         }
+
+        public static void SetSessionValue(string name, object value)
+        {
+            if (HttpContext.Current != null)
+                HttpContext.Current.Session.Add(name, value);
+        }
+
+        User currentUser = new User();
+        Organization currentOrganization = new Organization();
+        TiendaActual currentTienda = new TiendaActual();
+        Connection currentConnection = new Connection();
+        Profile currentProfile = new Profile();
+
+        AnioLectivoActual currentAnioLectivo = new AnioLectivoActual();
+
+        public User CurrentUser { get { return currentUser; } }
+        public Organization CurrentOrganization { get { return currentOrganization; } }
+        public TiendaActual CurrentTienda { get { return currentTienda; } }
+        public Connection CurrentConnection { get { return currentConnection; } }
+        public Dece.Common.Security.Profile CurrentProfile { get { return currentProfile; } }
+
+        public AnioLectivoActual CurrentAnioLectivo { get { return currentAnioLectivo; } }
+
+        MessageCollection messages = new MessageCollection();
+        public MessageCollection Messages { get { return messages; } }
+
+        public string TextoAdicional { get; set; }
+
+        public int CurrentOption { get; set; }
+        public string CurrentActivity { get; set; }
+
+        public List<OpcionQuery> ListOpcion { get; set; }
+        public List<OpcionActividadQuery> ListActividad { get; set; }
+        public List<OpcionActividadAccionQuery> ListAccion { get; set; }
+
+        public string Menu { get; set; }
+        //public int AnioLectivo { get; set; }
+        //public string IdEstadoAnioLectivo { get; set; }
+
+        public bool EsRepresentante
+        {
+            get
+            {
+                bool esRepresentante = false;
+
+                var entity = currentProfile.EntityProfile;
+                if (entity != null)
+                {
+                    esRepresentante = entity.Any(p => p.IdTipoentidad == "REP");
+                }
+
+                return esRepresentante;
+            }
+        }
+
+
+        public bool EsInterno
+        {
+            get
+            {
+                bool esInterno = false;
+
+                var entity = currentProfile.EntityProfile;
+                if (entity != null)
+                {
+                    esInterno = entity.Any(p => p.AditionalValues == "1");
+                }
+
+                return esInterno;
+            }
+        }
+
+
+        public bool EsExterno
+        {
+            get
+            {
+                bool esExterno = false;
+
+                var entity = currentProfile.EntityProfile;
+                if (entity != null)
+                {
+                    esExterno = entity.Any(p => p.AditionalValues == "2" || p.AditionalValues == "3") || currentProfile.EsEstudiante;
+                }
+
+                return esExterno;
+            }
+        }
+
+    }
+
+    public class User
+    {
+        public string LogonName { get; set; }
+        public string FullName { get; set; }
+    }
+
+    public class Organization
+    {
+        public int Id { get; set; }
+        public string FullName { get; set; }
+        public string Logo { get; set; }
+    }
+
+    //public class Profile
+    //{
+    //    public int IdPersona { get; set; }
+    //    public int IdEstudiante { get; set; }
+    //}
+
+    //public class EntityProfile
+    //{
+    //    public string IdTipoentidad { get; set; }
+    //}
+
+    public class Connection
+    {
+        public string TokenType { get; set; }
+        public string Token { get; set; }
+        public string UrlAPi { get; set; }
+    }
+
+    public class TiendaActual
+    {
+        public int IdTienda { get; set; }
+        public string Descripcion { get; set; }
+    }
+
+
+    public class AnioLectivoActual
+    {
+        public int AnioLectivo { get; set; }
+        public string Descripcion { get; set; }
+        public string IdEstado { get; set; }
+        public DateTime FechaInicio { get; set; }
+        public DateTime FechaFin { get; set; }
     }
 }

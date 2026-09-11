@@ -12,6 +12,9 @@ using System.Web.Mvc;
 
 namespace Bc.Web.Mvc.Html
 {
+   
+
+
     public enum ElementThemeType
     {
         [ID("default")]
@@ -24,6 +27,10 @@ namespace Bc.Web.Mvc.Html
         Warning,
         [ID("success")]
         Success,
+        [ID("calendar")]
+        Calendar,
+        [ID("info")]
+        Info,
     }    
 
     public enum ModalEffect
@@ -99,7 +106,8 @@ namespace Bc.Web.Mvc.Html
         Size_10,
         Size_11,
         Size_12,
-        Auto
+        Auto,
+        None
     }
 
     public enum ListBoxMode
@@ -122,6 +130,14 @@ namespace Bc.Web.Mvc.Html
         Pdf,
         Html,
         Office
+    }
+
+    public enum FlexDirection
+    {
+        Column,
+        ColumReverse,
+        Row,
+        RowReverse
     }
 
     internal static class Constants
@@ -159,15 +175,16 @@ namespace Bc.Web.Mvc.Html
                 }
             }
         }
-
+        
         public static class Style
         {
             public static class ElementClass
             {
                 public const string ButtonClass = "btn";
                 public const string BlockButtonClass = "btn-block";
-                public const string DatePickerClass = "datepicker form-control BcDateInput datetime";
-                //  public const string DatePickerClass = "datepicker form-control input-sm BcDateInput datetime";
+                public const string DatePickerClass = "datepicker form-control BcDateInput ";
+                public const string DateTimePickerClass = "datepicker form-control BcDateTimeInput";
+                public const string DateRangePickerClass = "form-control";
                 public const string FormClass = "form-horizontal";
                 public const string TextBoxClass = "form-control";
                 public const string ContentCheckBoxClass = "icheckbox_square-blue checkbox";
@@ -271,20 +288,22 @@ namespace Bc.Web.Mvc.Html
 
             public static class ColumnSizeClass
             {
-                public const string Size_1 = "col-sm-1";
-                public const string Size_2 = "col-sm-2";
-                public const string Size_3 = "col-sm-3";
-                public const string Size_4 = "col-sm-4";
-                public const string Size_5 = "col-sm-5";
-                public const string Size_6 = "col-sm-6";
-                public const string Size_7 = "col-sm-7";
-                public const string Size_8 = "col-sm-8";
-                public const string Size_9 = "col-sm-9";
-                public const string Size_10 = "col-sm-10";
-                public const string Size_11 = "col-sm-11";
-                public const string Size_12 = "col-sm-12";
+                public const string Size_1 = "col-xs-6 col-sm-1 col-md-1 col-lg-1";
+                public const string Size_2 = "col-xs-6 col-sm-3 col-md-3 col-lg-2";
+                public const string Size_3 = "col-xs-6 col-sm-4 col-md-4 col-lg-3";
+                public const string Size_4 = "col-xs-12 col-sm-6 col-md-6 col-lg-4";
+                public const string Size_5 = "col-xs-12 col-sm-6 col-md-6 col-lg-5";
+                public const string Size_6 = "col-xs-12 col-sm-12 col-md-12 col-lg-6";
+                public const string Size_7 = "col-xs-12 col-sm-12 col-md-12 col-lg-7";
+                public const string Size_8 = "col-xs-12 col-sm-12 col-md-12 col-lg-8";
+                public const string Size_9 = "col-xs-12 col-sm-12 col-md-12 col-lg-9";
+                public const string Size_10 = "col-xs-12 col-sm-12 col-md-12 col-lg-10";
+                public const string Size_11 = "col-xs-12 col-sm-12 col-md-12 col-lg-11";
+                public const string Size_12 = "col-xs-12 col-sm-12 col-md-12 col-lg-12";
             }
         }
+
+        public const bool DefaultLabelPosition = true;
     }
 
     public static class BcHelper
@@ -375,6 +394,9 @@ namespace Bc.Web.Mvc.Html
                 case HtmlColumnSize.Auto:
                     styleClass = Constants.Style.ColumnSizeClass.Size_1;
                     break;
+                case HtmlColumnSize.None:
+                    styleClass = "";
+                    break;
 
             }
             return styleClass;
@@ -429,6 +451,27 @@ namespace Bc.Web.Mvc.Html
                     break;
             }
             return styleClass;
-        }      
+        }
+
+        public static string GetFlexDirection(FlexDirection direction)
+        {
+            string style = "";
+            switch (direction)
+            {
+                case FlexDirection.Column:
+                    style = "column";
+                    break;
+                case FlexDirection.ColumReverse:
+                    style = "column-reverse";
+                    break;
+                case FlexDirection.Row:
+                    style = "row";
+                    break;
+                case FlexDirection.RowReverse:
+                    style = "row-reverse";
+                    break;
+            }
+            return style;
+        }
     }
 }

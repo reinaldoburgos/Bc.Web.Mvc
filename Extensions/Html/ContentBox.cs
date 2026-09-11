@@ -14,7 +14,7 @@ namespace Bc.Web.Mvc.Html
         internal static void BeginContentBox(this System.Web.Mvc.HtmlHelper htmlHelper,
            string title = null, Icons? icon = null, bool paddingContent = false, TabCollection tabs = null, object htmlAttributes = null)
         {
-            BeginContentBox(htmlHelper, title, icon!=null?icon.GetID():null, paddingContent, tabs, htmlAttributes: htmlAttributes);
+            BeginContentBox(htmlHelper, title, icon != null ? icon.GetID() : null, paddingContent, tabs, htmlAttributes: htmlAttributes);
         }
 
         internal static void BeginContentBox(this System.Web.Mvc.HtmlHelper htmlHelper,
@@ -30,7 +30,7 @@ namespace Bc.Web.Mvc.Html
                             "</span> ", Constants.Style.GeneralClass.IconClass, iconClass, (useTab ? "pull-right" : ""));
             }
 
-            string labelHtml = string.Empty;           
+            string labelHtml = string.Empty;
 
             //    "<span class=\"label label-danger\">48 notices</span>";
             StringBuilder tabBuilder = new StringBuilder();
@@ -39,15 +39,33 @@ namespace Bc.Web.Mvc.Html
                 tabBuilder.Append("<ul class=\"nav nav-tabs\">");
                 foreach (TabPane tab in tabs)
                 {
-                    tabBuilder.Append(string.Format("<li {2}><a {3} data-toggle=\"tab\" href=\"{0}\">{1}</a></li>",
+                    string icon = string.Empty;
+                    string iconColor = string.Empty;
+                    string id = string.Empty;
+
+                    if (!string.IsNullOrEmpty(tab.Icon))
+                    {
+                        if (!string.IsNullOrEmpty(tab.IconColor))
+                        {
+                            iconColor = $" style=\"color:{tab.IconColor}!important;\"";
+                        }
+
+                        icon = $"<i class=\"{tab.Icon}\" {iconColor} aria-hidden=\"true\"></i>";
+                    }
+
+                    if (!string.IsNullOrEmpty(tab.Id))
+                        id = $"id=\"{tab.Id}\"";
+
+
+                    tabBuilder.Append(string.Format("<li {2}><a {5} {3} data-toggle=\"tab\" href=\"{0}\" >{4}{1}</a></li>",
                         tab.ResultTarget, tab.Name, tab.Selected ? "class=\"active\"" : "",
-                        (tab.TargetType == TabTarget.Url ? "targettype=\"url\"" : "targettype=\"content\"")));
+                        (tab.TargetType == TabTarget.Url ? "targettype=\"url\"" : "targettype=\"content\""), icon, id));
                 }
                 tabBuilder.Append("</ul>");
             }
 
             string html = string.Empty;
-            if(useTab)
+            if (useTab)
             {
                 html = string.Format("<div widget-box class=\"{0}\">" +
                         "{1} <div class=\"{2}\">",
@@ -59,16 +77,16 @@ namespace Bc.Web.Mvc.Html
             else
             {
                 string titleBlock = string.Empty;
-                if(!string.IsNullOrWhiteSpace(title))
+                if (!string.IsNullOrWhiteSpace(title))
                 {
-                    titleBlock = string.Format("<div class=\"{0}\" style=\"margin-bottom:20px\"><h5>{2}{1}</h5></div>", 
+                    titleBlock = string.Format("<div class=\"{0}\" style=\"margin-bottom:20px\"><h5>{2}{1}</h5></div>",
                         Constants.Style.WidgetClass.TitleClass,
                         title.ToUpper(),
                         iconHtml);
                 }
 
                 RouteValueDictionary dictionary = System.Web.Mvc.HtmlHelper.AnonymousObjectToHtmlAttributes(htmlAttributes);
-                if(dictionary.ContainsKey("class"))
+                if (dictionary.ContainsKey("class"))
                 {
                     dictionary["class"] = dictionary["class"] + Constants.Style.WidgetClass.BoxClass;
                 }
@@ -76,15 +94,15 @@ namespace Bc.Web.Mvc.Html
                 {
                     dictionary["class"] = Constants.Style.WidgetClass.BoxClass;
                 }
-         
+
                 StringBuilder builderAttrs = new StringBuilder();
-                foreach(var attr in dictionary)
-                {                    
-                    builderAttrs.AppendFormat(" {0}=\"{1}\"",attr.Key, attr.Value);                    
+                foreach (var attr in dictionary)
+                {
+                    builderAttrs.AppendFormat(" {0}=\"{1}\"", attr.Key, attr.Value);
                 }
 
                 html = string.Format("<div widget-box>{0}" +
-                        "<div {1}>", 
+                        "<div {1}>",
                         titleBlock,
                         builderAttrs.ToString());
             }
