@@ -140,6 +140,12 @@ namespace Bc.Web.Mvc.Html
         RowReverse
     }
 
+    public enum FlexStack
+    {
+        None = 0,
+        Tablet = 1
+    }
+
     internal static class Constants
     {
         public class DateFormat
@@ -238,6 +244,8 @@ namespace Bc.Web.Mvc.Html
                 public const string FieldCheckSideClass = "is-check-side";
                 public const string FieldReadOnlyClass = "is-ro";
                 public const string FieldSpanPrefix = "dp-span-";
+                public const string FlexClass = "dp-flex";
+                public const string FlexStackTabletClass = "is-stack-tablet";
             }
 
             public static class GeneralClass

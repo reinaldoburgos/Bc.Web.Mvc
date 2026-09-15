@@ -45,10 +45,15 @@ namespace Bc.Web.Mvc.Html
         public static MvcContent BcBeginFlexRow(this HtmlHelper htmlHelper, bool wrap = true,
             FlexDirection flexDirection = FlexDirection.Row,
             int? gap = null,
+            FlexStack stackAt = FlexStack.None,
             object htmlAttributes = null)
         {
+            string stackClass = stackAt == FlexStack.Tablet
+                ? Constants.Style.ContentClass.FlexClass + " " + Constants.Style.ContentClass.FlexStackTabletClass
+                : "";
+
             var resulthtmlAttributes = Bc.Web.Mvc.Utility.HtmlHelper.MergeAnonymousObjectHtmlAttributes(
-                new { @class = "" /*Constants.Style.ContentClass.Row*/ },
+                new { @class = stackClass },
                 htmlAttributes);
 
             // Obtener los estilos CSS existentes del atributo "style"
