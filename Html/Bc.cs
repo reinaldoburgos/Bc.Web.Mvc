@@ -146,6 +146,25 @@ namespace Bc.Web.Mvc.Html
         Tablet = 1
     }
 
+    public enum FilterBarWidth
+    {
+        Default = 0,
+        Full = 1,
+        Narrow = 2
+    }
+
+    public enum SplitPaneSize
+    {
+        Fill = 0,
+        Rail = 1,
+        Side = 2,
+        Fr1 = 11,
+        Fr2 = 12,
+        Fr3 = 13,
+        Fr4 = 14,
+        Fr5 = 15
+    }
+
     internal static class Constants
     {
         public class DateFormat
@@ -238,6 +257,23 @@ namespace Bc.Web.Mvc.Html
                 public const string Row = "row";
                 public const string TabPane = "tab-pane";
                 public const string FieldGridClass = "dp-field-grid";
+                public const string FilterBarClass = "dp-filter-bar";
+                public const string FilterBarFullClass = "is-full";
+                public const string FilterBarNarrowClass = "is-narrow";
+                public const string SplitClass = "dp-split";
+                public const string SplitPaneClass = "dp-split-pane";
+                public const string SplitPaneRailClass = "is-rail";
+                public const string SplitPaneSideClass = "is-side";
+                public const string SplitPaneFillClass = "is-fill";
+                public const string SplitPaneFr1Class = "is-fr1";
+                public const string SplitPaneFr2Class = "is-fr2";
+                public const string SplitPaneFr3Class = "is-fr3";
+                public const string SplitPaneFr4Class = "is-fr4";
+                public const string SplitPaneFr5Class = "is-fr5";
+                public const string SplitPaneCollapsibleClass = "is-collapsible";
+                public const string SplitToolbarClass = "dp-split-toolbar";
+                public const string SplitCollapseClass = "dp-split-collapse";
+                public const string SplitSearchClass = "dp-split-search";
                 public const string FieldClass = "dp-field";
                 public const string FieldControlClass = "dp-field-control";
                 public const string FieldInlineClass = "is-inline";

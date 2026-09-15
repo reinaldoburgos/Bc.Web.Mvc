@@ -11,12 +11,13 @@ namespace Bc.Web.Mvc.Html
 {
     /// <summary>
     /// Helpers aditivos de botones (Sprint 2.3). No reemplazan BcOptionActivityButton / BcButton.
-    /// Fuente de opción/actividad: parámetros → ViewBag → Session (fallback; 2b limpia la sesión).
+    /// Fuente de opción/actividad (2b): parámetros → ViewBag → Model.CurrentActivity. Sin Session para pintar.
     /// </summary>
     public static class ActivityButtonExtensions
     {
         public const string ViewBagIdOpcion = "IdOpcion";
         public const string ViewBagIdActividad = "IdActividad";
+        public const string ViewBagCurrentActivity = "CurrentActivity";
 
         public static MvcContent BcBeginContentHeader(this HtmlHelper htmlHelper, string title,
             string subtitle = null, object htmlAttributes = null)
@@ -245,27 +246,27 @@ namespace Bc.Web.Mvc.Html
                 return idOpcion.Value;
             }
 
-            object fromView = helper != null ? helper.ViewContext.ViewData[ViewBagIdOpcion] : null;
-            if (fromView != null)
+            if (helper != null)
             {
-                int parsed;
-                if (int.TryParse(Convert.ToString(fromView), out parsed) && parsed != 0)
+                object fromView = helper.ViewContext.ViewData[ViewBagIdOpcion];
+                if (fromView != null)
                 {
-                    return parsed;
+                    int parsed;
+                    if (int.TryParse(Convert.ToString(fromView), out parsed) && parsed != 0)
+                    {
+                        return parsed;
+                    }
                 }
-            }
-
-            var current = Session.Current;
-            if (current.IsStarted && current.CurrentOption != 0)
-            {
-                return current.CurrentOption;
             }
 
             return 0;
         }
 
         /// <summary>
-        /// null = resolver ViewBag/sesión; "" = modo Index (ListActividad).
+        /// null = resolver ViewBag / Model; "" = modo Index (ListActividad).
+        /// No usar el QUERY/EDIT del [AuthorizeUser]: eso es permiso, no actividad de barra.
+        /// ViewBag.CurrentActivity solo cuenta si no es null (el ctor de muchos controllers lo deja en null).
+        /// Sin Session: pintar desde request/vista (Sprint 2b).
         /// </summary>
         internal static string ResolveActividad(HtmlHelper helper, string actividad)
         {
@@ -274,16 +275,24 @@ namespace Bc.Web.Mvc.Html
                 return actividad;
             }
 
-            object fromView = helper != null ? helper.ViewContext.ViewData[ViewBagIdActividad] : null;
-            if (fromView != null)
+            if (helper != null)
             {
-                return Convert.ToString(fromView) ?? string.Empty;
-            }
+                if (helper.ViewContext.ViewData.ContainsKey(ViewBagIdActividad))
+                {
+                    return Convert.ToString(helper.ViewContext.ViewData[ViewBagIdActividad]) ?? string.Empty;
+                }
 
-            var current = Session.Current;
-            if (current.IsStarted)
-            {
-                return current.CurrentActivity ?? string.Empty;
+                object fromCurrentActivityBag = helper.ViewContext.ViewData[ViewBagCurrentActivity];
+                if (fromCurrentActivityBag != null)
+                {
+                    return Convert.ToString(fromCurrentActivityBag) ?? string.Empty;
+                }
+
+                var model = helper.ViewContext.ViewData.Model as Base.BaseViewModels;
+                if (model != null && model.CurrentActivity != null)
+                {
+                    return model.CurrentActivity;
+                }
             }
 
             return string.Empty;
