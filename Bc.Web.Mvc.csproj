@@ -106,6 +106,7 @@
     <Compile Include="Extensions\Html\Form.cs" />
     <Compile Include="Extensions\Html\FormActionGroup.cs" />
     <Compile Include="Extensions\Html\FormGroup.cs" />
+    <Compile Include="Extensions\Html\FieldGroup.cs" />
     <Compile Include="Extensions\Html\HelpInputGroup.cs" />
     <Compile Include="Extensions\Html\HelpPassword.cs" />
     <Compile Include="Extensions\Html\HelpTextBox.cs" />

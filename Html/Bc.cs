@@ -230,7 +230,14 @@ namespace Bc.Web.Mvc.Html
                 public const string InputGroupClass = "input-group";
                 public const string InputGroupAddOnClass = "input-group-addon";
                 public const string Row = "row";
-                public const string TabPane = "tab-pane";                
+                public const string TabPane = "tab-pane";
+                public const string FieldGridClass = "dp-field-grid";
+                public const string FieldClass = "dp-field";
+                public const string FieldControlClass = "dp-field-control";
+                public const string FieldInlineClass = "is-inline";
+                public const string FieldCheckSideClass = "is-check-side";
+                public const string FieldReadOnlyClass = "is-ro";
+                public const string FieldSpanPrefix = "dp-span-";
             }
 
             public static class GeneralClass
