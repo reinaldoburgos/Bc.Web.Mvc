@@ -258,6 +258,18 @@ namespace Bc.Web.Mvc.Html
                 public const string UiTabBarClass = "dp-acc-tabsbar";
                 public const string UiTabsClass = "dp-tabs";
                 public const string UiTabClass = "dp-tab";
+                public const string UiPanelClass = "dp-acc";
+                public const string UiPanelStaticClass = "is-static";
+                public const string UiPanelOpenClass = "is-open";
+                public const string UiPanelHeadClass = "dp-acc-head";
+                public const string UiPanelTitleClass = "dp-acc-title";
+                public const string UiPanelAddClass = "dp-acc-add";
+                public const string UiPanelBodyClass = "dp-acc-body";
+                public const string UiPillsClass = "dp-pills";
+                public const string UiPillClass = "dp-pill";
+                public const string UiPillOnClass = "is-on";
+                public const string UiPillInputClass = "dp-pill-input";
+                public const string UiPillTextClass = "dp-pill-text";
             }
 
             public static class GeneralClass

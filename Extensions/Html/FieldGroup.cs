@@ -332,6 +332,42 @@ namespace Bc.Web.Mvc.Html
             return htmlHelper.FieldGroupEditor(expression, editor.ToString(), labelHtmlAttributes, labelText, false, labelTextUp, span, htmlAttributes);
         }
 
+        public static MvcHtmlString BcFieldGroupPillGroupFor<TModel, TValue>(this HtmlHelper<TModel> htmlHelper,
+            Expression<Func<TModel, TValue>> expression, SelectList selectList,
+            object labelHtmlAttributes = null, object editorHtmlAttributes = null,
+            string labelText = null, string name = null, bool labelTextUp = Constants.DefaultLabelPosition,
+            bool disabled = false, int span = FieldSpan.Full, object htmlAttributes = null)
+        {
+            MvcHtmlString editor = htmlHelper.BcPillGroupFor(expression, selectList,
+                htmlAttributes: editorHtmlAttributes, name: name, disabled: disabled);
+            return htmlHelper.FieldGroupEditor(expression, editor.ToString(), labelHtmlAttributes, labelText,
+                false, labelTextUp, span, htmlAttributes);
+        }
+
+        public static MvcHtmlString BcFieldGroupPillGroupFor<TModel, TValue>(this HtmlHelper<TModel> htmlHelper,
+            Expression<Func<TModel, TValue>> expression, IEnumerable<SelectListItem> selectList,
+            object labelHtmlAttributes = null, object editorHtmlAttributes = null,
+            string labelText = null, string name = null, bool labelTextUp = Constants.DefaultLabelPosition,
+            bool disabled = false, int span = FieldSpan.Full, object htmlAttributes = null)
+        {
+            MvcHtmlString editor = htmlHelper.BcPillGroupFor(expression, selectList,
+                htmlAttributes: editorHtmlAttributes, name: name, disabled: disabled);
+            return htmlHelper.FieldGroupEditor(expression, editor.ToString(), labelHtmlAttributes, labelText,
+                false, labelTextUp, span, htmlAttributes);
+        }
+
+        public static MvcHtmlString BcFieldGroupPillGroup(this HtmlHelper htmlHelper, string name,
+            IEnumerable<SelectListItem> selectList, object selectedValue = null,
+            string labelText = null, object labelHtmlAttributes = null, object editorHtmlAttributes = null,
+            bool labelTextUp = Constants.DefaultLabelPosition, bool disabled = false,
+            int span = FieldSpan.Full, object htmlAttributes = null)
+        {
+            MvcHtmlString editor = htmlHelper.BcPillGroup(name, selectList, selectedValue,
+                htmlAttributes: editorHtmlAttributes, disabled: disabled);
+            return htmlHelper.FieldGroupEditor(editor.ToString(), labelHtmlAttributes, labelText,
+                false, labelTextUp, span, htmlAttributes);
+        }
+
         public static MvcHtmlString BcFieldGroupDatePickerDevExFor<TModel>(this HtmlHelper<TModel> htmlHelper,
             Expression<Func<TModel, DateTime?>> expression, object labelHtmlAttributes = null, object editorHtmlAttributes = null,
             bool includeMessageValidation = false, string labelText = null, bool includeTime = false,
