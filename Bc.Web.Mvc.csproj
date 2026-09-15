@@ -119,6 +119,7 @@
     <Compile Include="Extensions\Html\UiTabPane.cs" />
     <Compile Include="Extensions\Html\UiPanel.cs" />
     <Compile Include="Extensions\Html\PillGroup.cs" />
+    <Compile Include="Extensions\Html\Switch.cs" />
     <Compile Include="Extensions\Html\MergeHtml.cs" />
     <Compile Include="Extensions\Html\Modal.cs" />
     <Compile Include="Extensions\Html\Nav.cs" />

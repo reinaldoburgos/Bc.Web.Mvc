@@ -302,6 +302,26 @@ namespace Bc.Web.Mvc.Html
             return htmlHelper.FieldGroupEditor(expression, editor.ToString(), labelHtmlAttributes, labelText, readOnly, labelTextUp, span, htmlAttributes);
         }
 
+        public static MvcHtmlString BcFieldGroupSwitchFor<TModel>(this HtmlHelper<TModel> htmlHelper,
+            Expression<Func<TModel, bool>> expression,
+            Icons? dataOnIcon = Icons.Check, Icons? dataOffIcon = Icons.Cancel,
+            string dataOn = "Si", ElementThemeType dataOnthemeType = ElementThemeType.Primary,
+            string dataOff = "No", ElementThemeType dataOffthemeType = ElementThemeType.Default,
+            int? width = null, bool showLabels = true,
+            string labelText = null, object labelHtmlAttributes = null,
+            bool labelTextUp = Constants.DefaultLabelPosition, object editorHtmlAttributes = null, bool readOnly = false,
+            int span = FieldSpan.Full, object htmlAttributes = null)
+        {
+            MvcHtmlString editor = htmlHelper.BcSwitchFor(expression,
+                dataOnIcon: dataOnIcon, dataOffIcon: dataOffIcon,
+                dataOn: dataOn, dataOnthemeType: dataOnthemeType,
+                dataOff: dataOff, dataOffthemeType: dataOffthemeType,
+                width: width, showLabels: showLabels,
+                htmlAttributes: editorHtmlAttributes, readOnly: readOnly);
+            return htmlHelper.FieldGroupEditor(expression, editor.ToString(), labelHtmlAttributes, labelText,
+                readOnly, labelTextUp, span, htmlAttributes);
+        }
+
         private static object WithCheckSide(object htmlAttributes, bool labelTextUp)
         {
             if (labelTextUp)

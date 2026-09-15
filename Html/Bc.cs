@@ -270,6 +270,14 @@ namespace Bc.Web.Mvc.Html
                 public const string UiPillOnClass = "is-on";
                 public const string UiPillInputClass = "dp-pill-input";
                 public const string UiPillTextClass = "dp-pill-text";
+                public const string UiSwitchClass = "dp-switch";
+                public const string UiSwitchOnClass = "is-on";
+                public const string UiSwitchLabeledClass = "has-labels";
+                public const string UiSwitchInputClass = "dp-switch-input";
+                public const string UiSwitchTrackClass = "dp-switch-track";
+                public const string UiSwitchKnobClass = "dp-switch-knob";
+                public const string UiSwitchOnLabelClass = "dp-switch-on";
+                public const string UiSwitchOffLabelClass = "dp-switch-off";
             }
 
             public static class GeneralClass
