@@ -115,6 +115,8 @@
     <Compile Include="Extensions\Html\LabelWidget.cs" />
     <Compile Include="Extensions\Html\ListBox.cs" />
     <Compile Include="Extensions\Html\OptionActivityButton.cs" />
+    <Compile Include="Extensions\Html\ActivityButton.cs" />
+    <Compile Include="Extensions\Html\UiTabPane.cs" />
     <Compile Include="Extensions\Html\MergeHtml.cs" />
     <Compile Include="Extensions\Html\Modal.cs" />
     <Compile Include="Extensions\Html\Nav.cs" />

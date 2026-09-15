@@ -246,6 +246,18 @@ namespace Bc.Web.Mvc.Html
                 public const string FieldSpanPrefix = "dp-span-";
                 public const string FlexClass = "dp-flex";
                 public const string FlexStackTabletClass = "is-stack-tablet";
+                public const string DetailHeaderClass = "detail-header";
+                public const string DetailHeaderTextClass = "detail-header-text";
+                public const string DetailHeaderSubClass = "sub";
+                public const string UiButtonOutlineClass = "btn btn-outline";
+                public const string UiButtonGhostClass = "btn btn-ghost";
+                public const string ActivityLinkClass = "btn btn-ghost btn-sm";
+                public const string UiTabPaneClass = "dp-acc-body";
+                public const string UiTabPaneOnClass = "is-on";
+                public const string UiTabPanelClass = "dp-acc has-tabs";
+                public const string UiTabBarClass = "dp-acc-tabsbar";
+                public const string UiTabsClass = "dp-tabs";
+                public const string UiTabClass = "dp-tab";
             }
 
             public static class GeneralClass
